@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<t:Process id="::0.::" par="" exe="cmd" xmlns:t="http://schemas.microsoft.com/research/tracebld/2008">
+<t:Directory>C:\Users\admin\source\repos\Detours\samples\tracebld</t:Directory>
+<t:Executable>%SYSDIR%\cmd.exe</t:Executable>
+<t:Line>%SYSDIR%\cmd.exe /c dir</t:Line>
+<t:Return>0</t:Return>
+<t:Files>
+</t:Files>
+<t:Vars>
+</t:Vars>
+</t:Process>
+
