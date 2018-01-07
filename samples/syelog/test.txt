@@ -1,9 +1,9 @@
-20180107112753869 3920 50.60: sltestp: hello world!
-20180107112753871 ---- --.60: Client closed pipe.
-20180107112753884 3720 50.60: sltest: Hello World! [1 of 4]
-20180107112753884 3720 50.60: sltest: Hello World! [2 of 4]
-20180107112753885 3720 50.60: sltest: Hello World! [3 of 4]
-20180107112753885 3720 50.60: sltest: Hello World! [4 of 4]
-20180107112753885 ---- --.50: Client requested terminate on next connection close.
-20180107112753885 3720 50.50: sltest: Requesting exit on close.
-20180107112753886 ---- --.60: Client closed pipe.
+20180107140812508 1940 50.60: sltestp: hello world!
+20180107140812509 ---- --.60: Client closed pipe.
+20180107140812532 3648 50.60: sltest: Hello World! [1 of 4]
+20180107140812533 3648 50.60: sltest: Hello World! [2 of 4]
+20180107140812533 3648 50.60: sltest: Hello World! [3 of 4]
+20180107140812533 3648 50.60: sltest: Hello World! [4 of 4]
+20180107140812534 ---- --.50: Client requested terminate on next connection close.
+20180107140812533 3648 50.50: sltest: Requesting exit on close.
+20180107140812534 ---- --.60: Client closed pipe.

@@ -1,42 +1,42 @@
-20180107112905020 3956 50.60: trcreg32: ######################################################### Binaries
-20180107112905021 3956 50.60: trcreg32: ### 01320000: C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe 00000000
-20180107112905021 3956 50.60: trcreg32: ### 65040000: C:\Users\admin\source\repos\Detours\bin.X86\trcreg32.dll 00031768
-20180107112905022 3956 50.60: trcreg32: ### 75980000: C:\Windows\system32\KERNELBASE.dll 0004984c
-20180107112905022 3956 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
-20180107112905022 3956 50.60: trcreg32: ### 75d80000: C:\Windows\system32\RPCRT4.dll 000a547c
-20180107112905022 3956 50.60: trcreg32: ### 75e30000: C:\Windows\system32\msvcrt.dll 000ae448
-20180107112905022 3956 50.60: trcreg32: ### 761a0000: C:\Windows\SYSTEM32\sechost.dll 00025332
-20180107112905023 3956 50.60: trcreg32: ### 773c0000: C:\Windows\system32\ADVAPI32.dll 000aa124
-20180107112905023 3956 50.60: trcreg32: ### 77660000: C:\Windows\SYSTEM32\ntdll.dll 00141148
-20180107112905023 3956 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
-20180107112905028 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905028 3956 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,800)
-20180107112905029 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905029 3956 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,0)
-20180107112905030 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 75ca0000
-20180107112905031 3956 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
-20180107112905032 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,InitializeCriticalSectionEx) -> 75cf3879
-20180107112905033 3956 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
-20180107112905034 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905035 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsAlloc) -> 75cf418d
-20180107112905036 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsSetValue) -> 75cf76e6
-20180107112905037 3956 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
-20180107112905038 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905039 3956 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,800)
-20180107112905040 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905040 3956 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,0)
-20180107112905042 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 75ca0000
-20180107112905043 3956 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
-20180107112905044 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,InitializeCriticalSectionEx) -> 75cf3879
-20180107112905045 3956 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
-20180107112905046 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905046 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsAlloc) -> 75cf418d
-20180107112905047 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsGetValue) -> 75cf1e16
-20180107112905048 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsSetValue) -> 75cf76e6
-20180107112905049 3956 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-localization-l1-2-1,0,800)
-20180107112905050 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112905051 3956 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,LCMapStringEx) -> 75d2f72b
-20180107112908057 3956 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-appmodel-runtime-l1-1-2,0,800)
-20180107112908057 3956 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
-20180107112908058 3956 50.50: trcreg32: ### Closing.
-20180107112908061 ---- --.60: Client closed pipe.
+20180107140924731 2000 50.60: trcreg32: ######################################################### Binaries
+20180107140924731 2000 50.60: trcreg32: ### 013e0000: C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe 00000000
+20180107140924733 2000 50.60: trcreg32: ### 0fd00000: C:\Users\admin\source\repos\Detours\bin.X86\trcreg32.dll 00031768
+20180107140924733 2000 50.60: trcreg32: ### 75980000: C:\Windows\system32\KERNELBASE.dll 0004984c
+20180107140924733 2000 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+20180107140924733 2000 50.60: trcreg32: ### 75d80000: C:\Windows\system32\RPCRT4.dll 000a547c
+20180107140924734 2000 50.60: trcreg32: ### 75e30000: C:\Windows\system32\msvcrt.dll 000ae448
+20180107140924734 2000 50.60: trcreg32: ### 761a0000: C:\Windows\SYSTEM32\sechost.dll 00025332
+20180107140924734 2000 50.60: trcreg32: ### 773c0000: C:\Windows\system32\ADVAPI32.dll 000aa124
+20180107140924734 2000 50.60: trcreg32: ### 77660000: C:\Windows\SYSTEM32\ntdll.dll 00141148
+20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
+20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,800)
+20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,0)
+20180107140924736 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 75ca0000
+20180107140924736 2000 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+20180107140924739 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,InitializeCriticalSectionEx) -> 75cf3879
+20180107140924739 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
+20180107140924741 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924742 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsAlloc) -> 75cf418d
+20180107140924743 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsSetValue) -> 75cf76e6
+20180107140924744 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
+20180107140924747 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924748 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,800)
+20180107140924749 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924750 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,0)
+20180107140924751 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 75ca0000
+20180107140924753 2000 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+20180107140924753 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,InitializeCriticalSectionEx) -> 75cf3879
+20180107140924754 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
+20180107140924756 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924756 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsAlloc) -> 75cf418d
+20180107140924757 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsGetValue) -> 75cf1e16
+20180107140924757 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsSetValue) -> 75cf76e6
+20180107140924758 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-localization-l1-2-1,0,800)
+20180107140924759 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140924760 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,LCMapStringEx) -> 75d2f72b
+20180107140927762 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-appmodel-runtime-l1-1-2,0,800)
+20180107140927762 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+20180107140927763 2000 50.50: trcreg32: ### Closing.
+20180107140927765 ---- --.60: Client closed pipe.

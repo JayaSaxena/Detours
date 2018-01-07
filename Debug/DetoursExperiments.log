@@ -1,0 +1,2270 @@
+﻿  
+  Microsoft (R) Program Maintenance Utility Version 14.12.25831.0
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples"
+  	cd "C:\Users\admin\source\repos\Detours\samples\syelog"
+  -------- Logging output to test.txt ------------
+  	start ..\..\bin.X86\syelogd.exe test.txt
+  	..\..\bin.X86\sleep5.exe 1
+  	..\..\bin.X86\sltestp.exe
+  	..\..\bin.X86\sltest.exe /x
+  	type test.txt
+  20180107140812508 1940 50.60: sltestp: hello world!
+  20180107140812509 ---- --.60: Client closed pipe.
+  20180107140812532 3648 50.60: sltest: Hello World! [1 of 4]
+  20180107140812533 3648 50.60: sltest: Hello World! [2 of 4]
+  20180107140812533 3648 50.60: sltest: Hello World! [3 of 4]
+  20180107140812533 3648 50.60: sltest: Hello World! [4 of 4]
+  20180107140812534 ---- --.50: Client requested terminate on next connection close.
+  20180107140812533 3648 50.50: sltest: Requesting exit on close.
+  20180107140812534 ---- --.60: Client closed pipe.
+  	cd "C:\Users\admin\source\repos\Detours\samples\simple"
+  -------- Reseting test binaries to initial state. ---------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\sleep5.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\sleep5.exe:
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should not load simple32.dll -----------------------------------
+  	..\..\bin.X86\sleep5.exe
+  sleep5.exe: Starting.
+  sleep5.exe: Done sleeping.
+  
+  -------- Adding simple32.dll to sleep5.exe ------------------------------
+  	..\..\bin.X86\setdll.exe -d:..\..\bin.X86\simple32.dll ..\..\bin.X86\sleep5.exe
+  Adding C:\Users\admin\source\repos\Detours\bin.X86\simple32.dll to binary files.
+    ..\..\bin.X86\sleep5.exe:
+      C:\Users\admin\source\repos\Detours\bin.X86\simple32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should load simple32.dll statically ----------------------------
+  	..\..\bin.X86\sleep5.exe
+  simple32.dll: Starting.
+  sleep5.exe: Starting.
+  sleep5.exe: Done sleeping.
+  simple32.dll: Detoured SleepEx().
+  simple32.dll: Removed SleepEx() (result=0), slept 0 ticks.
+  
+  -------- Removing simple32.dll from sleep5.exe --------------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\sleep5.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\sleep5.exe:
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should not load simple32.dll -----------------------------------
+  	..\..\bin.X86\sleep5.exe
+  sleep5.exe: Starting.
+  sleep5.exe: Done sleeping.
+  
+  -------- Should load simple32.dll dynamically using withdll.exe----------
+  	..\..\bin.X86\withdll.exe -d:..\..\bin.X86\simple32.dll ..\..\bin.X86\sleep5.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleep5.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\simple32.dll'
+  simple32.dll: Starting.
+  sleep5.exe: Starting.
+  sleep5.exe: Done sleeping.
+  simple32.dll: Detoured SleepEx().
+  simple32.dll: Removed SleepEx() (result=0), slept 0 ticks.
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\slept"
+  -------- Reseting test binaries to initial state. -----------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\sleepold.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\sleepold.exe:
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should load detour self ----------------------------------------
+  	..\..\bin.X86\sleepbed.exe
+  sleepbed.exe: Starting.
+  sleepbed.exe: ExeEntry=0095442A
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepbed.exe: Detoured SleepEx().
+  sleepbed.exe: After detour.
+    SleepEx = 75CE0296
+      75CE0296: e9d50ec7 8a                          [00951170]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepbed.exe: Calling Sleep for 1 second.
+  sleepbed.exe: Calling SleepEx for 1 second.
+  sleepbed.exe: Calling Sleep again for 1 second.
+  sleepbed.exe: Calling TimedSleepEx for 1 second.
+  sleepbed.exe: Calling UntimedSleepEx for 1 second.
+  sleepbed.exe: Done sleeping.
+  
+  sleepbed.exe: Removed SleepEx() detour (0), slept 1998 ticks.
+  sleepbed.exe: GetSleptTicks() = 1998
+  
+  
+  -------- Should load slept32.dll statically -------------------------------
+  	..\..\bin.X86\sleepnew.exe
+  slept32.dll:  Starting.
+  slept32.dll:  ExeEntry=012023A7, DllEntry=0FD767A7
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepnew.exe: Starting.
+    SleepEx = 75CE0296
+      75CE0296: e9351009 9a                          [0FD712D0]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepnew.exe: Calling Sleep for 1 second.
+  sleepnew.exe: Calling SleepEx for 1 second.
+  sleepnew.exe: Calling Sleep again for 1 second.
+  sleepnew.exe: Calling TimedSleep for 1 second.
+  sleepnew.exe: Calling UntimedSleep for 1 second.
+  sleepnew.exe: Done sleeping.
+  
+  sleepnew.exe: GetSleptTicks() = 1997
+  
+  slept32.dll:  Detoured SleepEx() @ 6DCD00D8.
+  slept32.dll:  Removed SleepEx() detour (0), slept 1997 ticks.
+  
+  -------- Should not load slept32.dll --------------------------------------
+  	..\..\bin.X86\sleepold.exe
+  sleepold.exe: Starting (at 01271170).
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  
+  -------- Adding slept32.dll to sleepold.exe -------------------------------
+  	..\..\bin.X86\setdll.exe -d:..\..\bin.X86\slept32.dll ..\..\bin.X86\sleepold.exe
+  Adding C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll to binary files.
+    ..\..\bin.X86\sleepold.exe:
+      C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should load slept32.dll statically -------------------------------
+  	..\..\bin.X86\sleepold.exe
+  slept32.dll:  Starting.
+  slept32.dll:  ExeEntry=009A2405, DllEntry=0FBB67A7
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Starting (at 009A1170).
+    SleepEx = 75CE0296
+      75CE0296: e93510ed 99                          [0FBB12D0]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  slept32.dll:  Detoured SleepEx() @ 6DCD00D8.
+  slept32.dll:  Removed SleepEx() detour (0), slept 998 ticks.
+  
+  -------- Replacing slept32.dll with dslept32.dll in sleepold.exe ------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\sleepold.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\sleepold.exe:
+      KERNEL32.dll -> KERNEL32.dll
+  	..\..\bin.X86\setdll.exe -d:..\..\bin.X86\dslept32.dll ..\..\bin.X86\sleepold.exe
+  Adding C:\Users\admin\source\repos\Detours\bin.X86\dslept32.dll to binary files.
+    ..\..\bin.X86\sleepold.exe:
+      C:\Users\admin\source\repos\Detours\bin.X86\dslept32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should load dslept32.dll instead of slept32.dll --------------------
+  	..\..\bin.X86\sleepold.exe
+  dslept32.dll:  Starting.
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+    EntryPoint = 00F12405
+      00F12405: e8fd0200 00                          [00F12707]
+      00F1240A: e97ffeff ff                          [00F1228E]
+      00F1240F: 3b0d08a0 f200                       
+    EntryPoint after attach = 00F12405
+      00F12405: e966ed2e 0e                          [0F201170]
+      00F1240A: e97ffeff ff                          [00F1228E]
+      00F1240F: 3b0d08a0 f200                       
+    EntryPoint trampoline = 00F000D8
+      00F000D8: e82a2601 00                          [00F12707]
+      00F000DD: e9282301 00                          [00F1240A]
+      00F000E2: cc                                   [FFFFFFFF]
+  dslept32.dll:  Detoured EntryPoint().
+  dslept32.dll:  Detoured SleepEx().
+    SleepEx = 75CE0296
+      75CE0296: e9950f52 99                          [0F201230]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  dslept32.dll:  Calling EntryPoint
+  sleepold.exe: Starting (at 00F11170).
+    SleepEx = 75CE0296
+      75CE0296: e9950f52 99                          [0F201230]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  dslept32.dll:  Removed Sleep() detours (0), slept 999 ticks.
+  
+  -------- Removing dslept32.dll from sleepold.exe --------------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\sleepold.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\sleepold.exe:
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should not load dslept32.dll or slept32.dll ------------------------
+  	..\..\bin.X86\sleepold.exe
+  sleepold.exe: Starting (at 00C81170).
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  
+  -------- Should load slept32.dll dynamically using withdll.exe ------------
+  	..\..\bin.X86\withdll.exe -d:..\..\bin.X86\slept32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll'
+  slept32.dll:  Starting.
+  slept32.dll:  ExeEntry=01352405, DllEntry=0FCD67A7
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Starting (at 01351170).
+    SleepEx = 75CE0296
+      75CE0296: e93510ff 99                          [0FCD12D0]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  slept32.dll:  Detoured SleepEx() @ 6DCD00D8.
+  slept32.dll:  Removed SleepEx() detour (0), slept 999 ticks.
+  
+  -------- Test completed. ------------------------------------------------
+  	cd "C:\Users\admin\source\repos\Detours\samples\setdll"
+  -------- Reseting test binaries to initial state. -----------------------
+  	..\..\bin.X86\setdll.exe -d:..\..\bin.X86\slept32.dll ..\..\bin.X86\sleepold.exe
+  Adding C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll to binary files.
+    ..\..\bin.X86\sleepold.exe:
+      C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  -------- Should load slept32.dll statically -------------------------------
+  	..\..\bin.X86\sleepold.exe
+  slept32.dll:  Starting.
+  slept32.dll:  ExeEntry=00AE2405, DllEntry=0FB767A7
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Starting (at 00AE1170).
+    SleepEx = 75CE0296
+      75CE0296: e93510e9 99                          [0FB712D0]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  slept32.dll:  Detoured SleepEx() @ 6DCD00D8.
+  slept32.dll:  Removed SleepEx() detour (0), slept 998 ticks.
+  -------- Reseting test binaries to initial state. -----------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\sleepold.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\sleepold.exe:
+      KERNEL32.dll -> KERNEL32.dll
+  -------- Should not load slept32.dll --------------------------------------
+  	..\..\bin.X86\sleepold.exe
+  sleepold.exe: Starting (at 00B91170).
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\withdll"
+  	..\..\bin.X86\withdll.exe -d:..\..\bin.X86\slept32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll'
+  slept32.dll:  Starting.
+  slept32.dll:  ExeEntry=00B92405, DllEntry=0F6167A7
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Starting (at 00B91170).
+    SleepEx = 75CE0296
+      75CE0296: e9351093 99                          [0F6112D0]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  slept32.dll:  Detoured SleepEx() @ 6DCD00D8.
+  slept32.dll:  Removed SleepEx() detour (0), slept 999 ticks.
+  	..\..\bin.X86\withdll.exe -v -d:..\..\bin.X86\slept32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\slept32.dll'
+  slept32.dll:  Starting.
+  slept32.dll:  ExeEntry=00B92405, DllEntry=0FD867A7
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Starting (at 00B91170).
+    SleepEx = 75CE0296
+      75CE0296: e935100a 9a                          [0FD812D0]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  slept32.dll:  Detoured SleepEx() @ 6DCD00D8.
+  slept32.dll:  Removed SleepEx() detour (0), slept 998 ticks.
+         Address   Offset     Size: Typ Sta Prot Ini : Contents
+    ------------ -------- --------: --- --- ---- --- : -----------------
+           10000        0    20000: pri com  rw- rw- : 
+           30000        0     4000: map com  r-- r-- : 
+           40000        0     1000: pri com  rw- rw- : 
+           50000        0     1000: pri com  rw- rw- : 32-bit PE
+          1f0000        0    fd000: pri res      rw- : 
+               -    fd000     2000: pri com grw- rw- : 
+               -    ff000     1000: pri com  rw- rw- : 
+          b90000        0     1000: img com  r-- rcx : 32-bit PE
+               -     1000    12000: img com  r-x rcx : .text
+               -    13000     7000: img com  r-- rcx : .rdata
+               -    1a000     2000: img com  rc- rcx : .data
+               -    1c000     2000: img com  r-- rcx : .detourc
+               -    1e000     1000: img com  rc- rcx : .detourd
+               -    1f000     2000: img com  r-- rcx : .reloc
+          bc0000        0     1000: pri com  rw- rw- : 
+        77660000        0     1000: img com  r-- rcx : 32-bit PE
+               -     1000    d5000: img com  r-x rcx : .text
+               -    d6000     1000: img com  r-x rcx : RT
+               -    d7000     6000: img com  rc- rcx : .data
+               -    dd000     2000: img com  rw- rcx : 
+               -    df000     1000: img com  rc- rcx : 
+               -    e0000    57000: img com  r-- rcx : .rsrc
+               -   137000     5000: img com  r-- rcx : .reloc
+        778a0000        0     1000: img com  r-- rcx : 
+        7ffb0000        0    23000: map com  r-- r-- : 
+        7ffd8000        0     1000: pri com  rw- rw- : 
+        7ffdf000        0     1000: pri com  rw- rw- : 
+        7ffe0000        0     1000: pri com  r-- r-- : 
+               -     1000     f000: pri res  --- r-- : 
+  	cd "C:\Users\admin\source\repos\Detours\samples\cping"
+  	cd "C:\Users\admin\source\repos\Detours\samples\disas"
+  	..\..\bin.X86\disas.exe
+  00351750:
+  00000001  90                       [        00000000] 90                     
+  00000003  6690                     [        00000000] 6690                   
+  00000006  0f1f00                   [        00000000] 0f1f00                 
+  0000000a  0f1f4000                 [        00000000] 0f1f4000               
+  0000000f  0f1f440000               [        00000000] 0f1f440000             
+  00000015  660f1f440000             [        00000000] 660f1f440000           
+  0000001c  0f1f8000000000           [        00000000] 0f1f8000000000         
+  00000024  0f1f840000000000         [        00000000] 0f1f840000000000       
+  0000002d  660f1f840000000000       [        00000000] 660f1f840000000000     
+  00000037  8bc8                     [        00000000] 8bc8                   
+  0000003a  bb0e00ffff               [        00000000] bb0e00ffff             
+  00000040  ffd3                     [        FFFFFFFF] ffd3                   
+  00000043  ff10                     [        FFFFFFFF] ff10                   
+  00000046  ff13                     [        FFFFFFFF] ff13                   
+  00000049  ff11                     [        FFFFFFFF] ff11                   
+  0000004c  ff12                     [        FFFFFFFF] ff12                   
+  0000004f  ff20                     [        FFFFFFFF] ff20                   
+  00000052  ff23                     [        FFFFFFFF] ff23                   
+  00000055  ff21                     [        FFFFFFFF] ff21                   
+  00000058  ff22                     [        FFFFFFFF] ff22                   
+  0000005b  ffd1                     [        FFFFFFFF] ffd1                   
+  0000005e  ffd0                     [        FFFFFFFF] ffd0                   
+  00000061  bb0e00ffff               [        00000000] bb0e00ffff             
+  00000067  50                       [        00000000] 50                     
+  00000069  ffd3                     [        FFFFFFFF] ffd3                   
+  0000006c  83fb00                   [        00000000] 83fb00                 
+  00000070  803d5098360077           [        00000000] 803d5098360077         
+  00000078  833d5098360077           [        00000000] 833d5098360077         
+  00000080  813d5098360077777777     [        00000000] 813d5098360077777777   
+  [003517DB]:
+  0000008b  70fd                     [        003517DA] 0f80381c0c00           
+  [003517DE]:
+  0000008e  71fa                     [        003517DA] 0f81381c0c00           
+  00000091  72f7                     [        003517DA] 0f82381c0c00           
+  00000094  73f4                     [        003517DA] 0f83381c0c00           
+  00000097  74f1                     [        003517DA] 0f84381c0c00           
+  0000009a  75ee                     [        003517DA] 0f85381c0c00           
+  0000009d  76eb                     [        003517DA] 0f86381c0c00           
+  000000a0  77e8                     [        003517DA] 0f87381c0c00           
+  000000a3  78e5                     [        003517DA] 0f88381c0c00           
+  000000a6  79e2                     [        003517DA] 0f89381c0c00           
+  000000a9  7adf                     [        003517DA] 0f8a381c0c00           
+  000000ac  7bdc                     [        003517DA] 0f8b381c0c00           
+  000000af  7cd9                     [        003517DA] 0f8c381c0c00           
+  000000b2  7dd6                     [        003517DA] 0f8d381c0c00           
+  000000b5  7ed3                     [        003517DA] 0f8e381c0c00           
+  000000b8  7fd0                     [        003517DA] 0f8f381c0c00           
+  000000bb  0f803fffffff             [        00351750] 0f80ae1b0c00           
+  000000c2  0f8138ffffff             [        00351750] 0f81ae1b0c00           
+  000000c9  0f8231ffffff             [        00351750] 0f82ae1b0c00           
+  000000d0  0f832affffff             [        00351750] 0f83ae1b0c00           
+  000000d7  0f8423ffffff             [        00351750] 0f84ae1b0c00           
+  000000de  0f851cffffff             [        00351750] 0f85ae1b0c00           
+  000000e5  0f8615ffffff             [        00351750] 0f86ae1b0c00           
+  000000ec  0f870effffff             [        00351750] 0f87ae1b0c00           
+  000000f3  0f8807ffffff             [        00351750] 0f88ae1b0c00           
+  000000fa  0f8900ffffff             [        00351750] 0f89ae1b0c00           
+  00000101  0f8af9feffff             [        00351750] 0f8aae1b0c00           
+  00000108  0f8bf2feffff             [        00351750] 0f8bae1b0c00           
+  0000010f  0f8cebfeffff             [        00351750] 0f8cae1b0c00           
+  00000116  0f8de4feffff             [        00351750] 0f8dae1b0c00           
+  0000011d  0f8eddfeffff             [        00351750] 0f8eae1b0c00           
+  00000124  0f8fd6feffff             [        00351750] 0f8fae1b0c00           
+  	cd "C:\Users\admin\source\repos\Detours\samples\dtest"
+  	..\..\bin.X86\dtest.exe
+  Calling LocalTarget1 w/o detour
+    LocalTarget1 (1)
+  Calling LocalTarget1 w/ detour
+    MyLocalTarget1 (2)
+    LocalTarget1 (2)
+  Calling Target0 function.
+    MyTarget0 ()
+  Calling TargetN functions.
+    MyLocalTarget1 (1)
+    LocalTarget1 (1)
+    MyTarget0 ()
+    MyTarget1 (1)
+    MyTarget2 (1,2)
+    MyTarget3 (1,2,3)
+    MyTarget4 (1,2,3,4)
+    MyTarget5 (1,2,3,4,5)
+    MyTarget6 (1,2,3,4,5,6)
+    MyTarget7 (1,2,3,4,5,6,7)
+    MyTarget8 (1,2,3,4,5,6,7,8)
+    MyTarget9 (1,2,3,4,5,6,7,8,9)
+    MyTarget10(1,2,3,4,5,6,7,8,9,10)
+    MyTarget11(1,2,3,4,5,6,7,8,9,10,11)
+    MyTarget12(1,2,3,4,5,6,7,8,9,10,11,12)
+    MyTarget13(1,2,3,4,5,6,7,8,9,10,11,12,13)
+    MyTarget14(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+    MyTarget15(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+    MyTarget16(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
+    MyTargetV (0)
+    MyTargetV (0,1)
+    MyTargetV (0,1,2)
+    MyTargetV (0,1,2,3)
+    MyTargetV (0,1,2,3,4)
+    MyTargetV (0,1,2,3,4,5)
+    MyTargetV (0,1,2,3,4,5,6)
+    MyTargetV (0,1,2,3,4,5,6,7)
+    MyTargetV (0,1,2,3,4,5,6,7,8)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10,11)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10,11,12)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+    MyTargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
+    MyTargetR (0,1,2,3,4)
+    MyTargetR (0,1,2,3,3)
+    MyTargetR (0,1,2,3,2)
+    MyTargetR (0,1,2,3,1)
+  ................................................................................................  MyTargetR (0,1,2,3,4,5,6,7,8,9,10,4)
+    MyTargetR (0,1,2,3,4,5,6,7,8,9,10,3)
+    MyTargetR (0,1,2,3,4,5,6,7,8,9,10,2)
+    MyTargetR (0,1,2,3,4,5,6,7,8,9,10,1)
+   => 2111
+  Calling Target0 again with 1 detour.
+    MyTarget0 ()
+  Calling Target0 again with 2 detours.
+    Starting Target0_1.
+    MyTarget0 ()
+    End Target0_1.
+  Calling Target0 again with 3 detours.
+    Starting Target0_2.
+    Starting Target0_1.
+    MyTarget0 ()
+    End Target0_1.
+    End Target0_2.
+  Calling Target0 again with 4 detours.
+    Starting Target0_3.
+    Starting Target0_2.
+    Starting Target0_1.
+    MyTarget0 ()
+    End Target0_1.
+    End Target0_2.
+    End Target0_3.
+  Done.
+      Target0 ()
+      Target0 ()
+      Target1 (1)
+      Target2 (1,2)
+      Target3 (1,2,3)
+      Target4 (1,2,3,4)
+      Target5 (1,2,3,4,5)
+      Target6 (1,2,3,4,5,6)
+      Target7 (1,2,3,4,5,6,7)
+      Target8 (1,2,3,4,5,6,7,8)
+      Target9 (1,2,3,4,5,6,7,8,9)
+      Target10(1,2,3,4,5,6,7,8,9,10)
+      Target11(1,2,3,4,5,6,7,8,9,10,11)
+      Target12(1,2,3,4,5,6,7,8,9,10,11,12)
+      Target13(1,2,3,4,5,6,7,8,9,10,11,12,13)
+      Target14(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+      Target15(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+      Target16(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
+      TargetV (0)
+      TargetV (0,1)
+      TargetV (0,1,2)
+      TargetV (0,1,2,3)
+      TargetV (0,1,2,3,4)
+      TargetV (0,1,2,3,4,5)
+      TargetV (0,1,2,3,4,5,6)
+      TargetV (0,1,2,3,4,5,6,7)
+      TargetV (0,1,2,3,4,5,6,7,8)
+      TargetV (0,1,2,3,4,5,6,7,8,9)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10,11)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10,11,12)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+      TargetV (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
+  :::    TargetR (0,1,2,3,1)
+  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::    TargetR (0,1,2,3,4,5,6,7,8,9,10,1)
+      Target0 ()
+      Target0 ()
+      Target0 ()
+      Target0 ()
+  	cd "C:\Users\admin\source\repos\Detours\samples\dumpe"
+  	..\..\bin.X86\dumpe.exe ..\..\bin.X86\slept.dll
+  Unable to load ..\..\bin.X86\slept.dll: Error 126
+  	cd "C:\Users\admin\source\repos\Detours\samples\dumpi"
+  	..\..\bin.X86\dumpi.exe ..\..\bin.X86\slept.dll ..\..\bin.X86\sleepold.exe
+  ..\..\bin.X86\sleepold.exe:
+    KERNEL32::WaitForSingleObject
+    KERNEL32::SleepEx
+    KERNEL32::OpenEventA
+    KERNEL32::Sleep
+    KERNEL32::GetLastError
+    KERNEL32::GetCurrentProcess
+    KERNEL32::GetCurrentThreadId
+    KERNEL32::VirtualQuery
+    KERNEL32::SetLastError
+    KERNEL32::FreeLibrary
+    KERNEL32::GetModuleHandleW
+    KERNEL32::GetProcAddress
+    KERNEL32::LoadLibraryExW
+    KERNEL32::QueryPerformanceCounter
+    KERNEL32::GetCurrentProcessId
+    KERNEL32::GetSystemTimeAsFileTime
+    KERNEL32::InitializeSListHead
+    KERNEL32::IsDebuggerPresent
+    KERNEL32::UnhandledExceptionFilter
+    KERNEL32::SetUnhandledExceptionFilter
+    KERNEL32::GetStartupInfoW
+    KERNEL32::IsProcessorFeaturePresent
+    KERNEL32::TerminateProcess
+    KERNEL32::RaiseException
+    KERNEL32::RtlUnwind
+    KERNEL32::EnterCriticalSection
+    KERNEL32::LeaveCriticalSection
+    KERNEL32::DeleteCriticalSection
+    KERNEL32::InitializeCriticalSectionAndSpinCount
+    KERNEL32::TlsAlloc
+    KERNEL32::TlsGetValue
+    KERNEL32::TlsSetValue
+    KERNEL32::TlsFree
+    KERNEL32::GetStdHandle
+    KERNEL32::WriteFile
+    KERNEL32::GetModuleFileNameA
+    KERNEL32::MultiByteToWideChar
+    KERNEL32::WideCharToMultiByte
+    KERNEL32::ExitProcess
+    KERNEL32::GetModuleHandleExW
+    KERNEL32::GetCommandLineA
+    KERNEL32::GetCommandLineW
+    KERNEL32::GetACP
+    KERNEL32::HeapFree
+    KERNEL32::HeapAlloc
+    KERNEL32::CompareStringW
+    KERNEL32::LCMapStringW
+    KERNEL32::GetFileType
+    KERNEL32::FlushFileBuffers
+    KERNEL32::GetConsoleCP
+    KERNEL32::GetConsoleMode
+    KERNEL32::FindClose
+    KERNEL32::FindFirstFileExA
+    KERNEL32::FindNextFileA
+    KERNEL32::IsValidCodePage
+    KERNEL32::GetOEMCP
+    KERNEL32::GetCPInfo
+    KERNEL32::GetEnvironmentStringsW
+    KERNEL32::FreeEnvironmentStringsW
+    KERNEL32::SetEnvironmentVariableA
+    KERNEL32::SetStdHandle
+    KERNEL32::GetStringTypeW
+    KERNEL32::GetProcessHeap
+    KERNEL32::SetFilePointerEx
+    KERNEL32::HeapSize
+    KERNEL32::HeapReAlloc
+    KERNEL32::CloseHandle
+    KERNEL32::CreateFileW
+    KERNEL32::WriteConsoleW
+    KERNEL32::DecodePointer
+  	cd "C:\Users\admin\source\repos\Detours\samples\echo"
+  -------- Should echo nothing. --------------------------------------
+  	..\..\bin.X86\echonul.exe
+  -------- Should echo Hello World. ----------------------------------
+  	..\..\bin.X86\withdll.exe -d:..\..\bin.X86\echofx32.dll ..\..\bin.X86\echonul.exe
+  withdll.exe: Starting: `..\..\bin.X86\echonul.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\echofx32.dll'
+  echofx32.dll: Starting.
+  echofx32.dll: Detoured Echo().
+  echofx32.dll: Removed Echo() (result=0)
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\einst"
+  	..\..\bin.X86\einst.exe
+  Source .EXE:
+    00000000 : C:\Users\admin\source\repos\Detours\bin.X86\einst.exe
+  
+  DLL and EXE binaries loaded:
+    01340000 : C:\Users\admin\source\repos\Detours\bin.X86\einst.exe
+    06BB0000 : C:\Users\admin\source\repos\Detours\bin.X86\edll2x32.dll
+    06BC4058..06BC4078 :                                    The Second Dll!
+    06D90000 : C:\Users\admin\source\repos\Detours\bin.X86\edll1x32.dll
+    06DA4058..06DA4078 :                                     The First Dll!
+    07220000 : C:\Users\admin\source\repos\Detours\bin.X86\edll3x32.dll
+    072340A0..072340E0 :                            The Third DLL Part Two!
+    75980000 : C:\Windows\system32\KERNELBASE.dll
+    75AB0000 : C:\Windows\system32\GDI32.dll
+    75C80000 : C:\Windows\system32\IMM32.DLL
+    75CA0000 : C:\Windows\system32\kernel32.dll
+    75E30000 : C:\Windows\system32\msvcrt.dll
+    75EE0000 : C:\Windows\system32\USP10.dll
+    77160000 : C:\Windows\system32\MSCTF.dll
+    772F0000 : C:\Windows\system32\USER32.dll
+    77660000 : C:\Windows\SYSTEM32\ntdll.dll
+    777F0000 : C:\Windows\system32\LPK.dll
+  	cd "C:\Users\admin\source\repos\Detours\samples\excep"
+  	cd "C:\Users\admin\source\repos\Detours\samples\comeasy"
+  -------- Reseting test binaries to initial state. -----------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\comeasy.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\comeasy.exe:
+      ole32.dll -> ole32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should not load slept32.dll --------------------------------------
+  	..\..\bin.X86\comeasy.exe
+  comeasy.exe: Starting (at 00111000).
+  comeasy.exe: First write.
+  comeasy.exe: Second write.
+  comeasy.exe: Third write.
+  comeasy.exe: Exiting.
+  
+  
+  -------- Adding wrotei32.dll to comeasy.exe ------------------------------
+  	..\..\bin.X86\setdll.exe -d:..\..\bin.X86\wrotei32.dll ..\..\bin.X86\comeasy.exe
+  Adding C:\Users\admin\source\repos\Detours\bin.X86\wrotei32.dll to binary files.
+    ..\..\bin.X86\comeasy.exe:
+      C:\Users\admin\source\repos\Detours\bin.X86\wrotei32.dll
+      ole32.dll -> ole32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should load wrotei32.dll ----------------------------------------
+  	..\..\bin.X86\comeasy.exe
+  wrotei32.dll: Starting.
+  wrotei32.dll: Detoured EntryPoint().
+  wrotei32.dll: Detoured IStream::Wrote() from OnHGlobal.
+  wrotei32.dll: Calling EntryPoint
+  
+  comeasy.exe: Starting (at 010C1000).
+  comeasy.exe: First write.
+  comeasy.exe: Second write.
+  comeasy.exe: Third write.
+  comeasy.exe: Exiting.
+  
+  wrotei32.dll: Removed IStream::Wrote() detours (0), wrote 24 bytes.
+  
+  -------- Removing wrotei32.dll from comeasy.exe --------------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\comeasy.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\comeasy.exe:
+      ole32.dll -> ole32.dll
+      KERNEL32.dll -> KERNEL32.dll
+  
+  -------- Should not load wrotei32.dll ------------------------------------
+  	..\..\bin.X86\comeasy.exe
+  comeasy.exe: Starting (at 00C91000).
+  comeasy.exe: First write.
+  comeasy.exe: Second write.
+  comeasy.exe: Third write.
+  comeasy.exe: Exiting.
+  
+  
+  -------- Should load wrotei32.dll dynamically using withdll.exe ----------
+  	..\..\bin.X86\withdll.exe -d:..\..\bin.X86\wrotei32.dll ..\..\bin.X86\comeasy.exe
+  withdll.exe: Starting: `..\..\bin.X86\comeasy.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\wrotei32.dll'
+  wrotei32.dll: Starting.
+  wrotei32.dll: Detoured EntryPoint().
+  wrotei32.dll: Detoured IStream::Wrote() from OnHGlobal.
+  wrotei32.dll: Calling EntryPoint
+  
+  comeasy.exe: Starting (at 00DD1000).
+  comeasy.exe: First write.
+  comeasy.exe: Second write.
+  comeasy.exe: Third write.
+  comeasy.exe: Exiting.
+  
+  wrotei32.dll: Removed IStream::Wrote() detours (0), wrote 24 bytes.
+  
+  -------- Test completed. ------------------------------------------------
+  	cd "C:\Users\admin\source\repos\Detours\samples\commem"
+  
+  	..\..\bin.X86\commem.exe
+  commem: Calling Write w/o before attach.
+  commem: Calling Write w/o after attach.
+  commem:   002BB570->IStreamWrite(pv=0015FF18, cb=8)
+  commem:   002BB570->IStreamWrite -> 00000000 (pcbWritten=8)
+  commem: Calling Write w/o after detach.
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\findfunc"
+  -------- Reseting test binaries to initial state. -----------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\findfunc.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\findfunc.exe:
+      KERNEL32.dll -> KERNEL32.dll
+      target32.dll -> target32.dll
+  
+  -------- Should not load extend32.dll--------------------------------------
+  	..\..\bin.X86\findfunc.exe
+  findfunc.exe: Starting.
+  DLLs:
+    00DA0000: C:\Users\admin\source\repos\Detours\bin.X86\findfunc.exe
+    00FB0000: C:\Users\admin\source\repos\Detours\bin.X86\target32.dll
+    75980000: C:\Windows\system32\KERNELBASE.dll
+    75CA0000: C:\Windows\system32\kernel32.dll
+    77660000: C:\Windows\SYSTEM32\ntdll.dll
+  findfunc.exe: Calling (10000).
+  findfunc.exe: Calling (20101).
+  findfunc.exe: Calling (30202).
+  target.dll:   Target  (10000) -> 10100.
+  target.dll:     Hidden(10100) -> 10101.
+  target.dll:   Target  (.....) -> 10101.
+  target.dll:   Target  (20101) -> 20201.
+  target.dll:     Hidden(20201) -> 20202.
+  target.dll:   Target  (.....) -> 20202.
+  target.dll:   Target  (30202) -> 30302.
+  target.dll:     Hidden(30302) -> 30303.
+  target.dll:   Target  (.....) -> 30303.
+  
+  -------- Adding extend32.dll to findfunc.exe ------------------------------
+  	..\..\bin.X86\setdll.exe -d:..\..\bin.X86\extend32.dll ..\..\bin.X86\findfunc.exe
+  Adding C:\Users\admin\source\repos\Detours\bin.X86\extend32.dll to binary files.
+    ..\..\bin.X86\findfunc.exe:
+      C:\Users\admin\source\repos\Detours\bin.X86\extend32.dll
+      KERNEL32.dll -> KERNEL32.dll
+      target32.dll -> target32.dll
+  
+  -------- Should load extend32.dll statically ------------------------------
+  	..\..\bin.X86\findfunc.exe
+  extend.dll: Starting.
+  extend.dll: Detoured EntryPoint().
+  extend.dll: Error detouring Target(): 6
+  extend.dll: TrueHidden = 00000000 (error = 126)
+  extend.dll: Error detouring Hidden(): 6
+  extend.dll: Calling EntryPoint
+  findfunc.exe: Starting.
+  DLLs:
+    00F30000: C:\Users\admin\source\repos\Detours\bin.X86\extend32.dll
+    010A0000: C:\Users\admin\source\repos\Detours\bin.X86\findfunc.exe
+    018F0000: C:\Users\admin\source\repos\Detours\bin.X86\target32.dll
+    75980000: C:\Windows\system32\KERNELBASE.dll
+    75CA0000: C:\Windows\system32\kernel32.dll
+    77660000: C:\Windows\SYSTEM32\ntdll.dll
+  findfunc.exe: Calling (10000).
+  findfunc.exe: Calling (20101).
+  findfunc.exe: Calling (30202).
+  target.dll:   Target  (10000) -> 10100.
+  target.dll:     Hidden(10100) -> 10101.
+  target.dll:   Target  (.....) -> 10101.
+  target.dll:   Target  (20101) -> 20201.
+  target.dll:     Hidden(20201) -> 20202.
+  target.dll:   Target  (.....) -> 20202.
+  target.dll:   Target  (30202) -> 30302.
+  target.dll:     Hidden(30302) -> 30303.
+  target.dll:   Target  (.....) -> 30303.
+  extend.dll: Removed Target() detours (0), 0/0 calls.
+  
+  -------- Removing extend32.dll from findfunc.exe --------------------------
+  	..\..\bin.X86\setdll.exe -r ..\..\bin.X86\findfunc.exe
+  Removing extra DLLs from binary files.
+    ..\..\bin.X86\findfunc.exe:
+      KERNEL32.dll -> KERNEL32.dll
+      target32.dll -> target32.dll
+  
+  -------- Should not load extend32.dll -------------------------------------
+  	..\..\bin.X86\findfunc.exe
+  findfunc.exe: Starting.
+  DLLs:
+    01070000: C:\Users\admin\source\repos\Detours\bin.X86\findfunc.exe
+    01430000: C:\Users\admin\source\repos\Detours\bin.X86\target32.dll
+    75980000: C:\Windows\system32\KERNELBASE.dll
+    75CA0000: C:\Windows\system32\kernel32.dll
+    77660000: C:\Windows\SYSTEM32\ntdll.dll
+  findfunc.exe: Calling (10000).
+  findfunc.exe: Calling (20101).
+  findfunc.exe: Calling (30202).
+  target.dll:   Target  (10000) -> 10100.
+  target.dll:     Hidden(10100) -> 10101.
+  target.dll:   Target  (.....) -> 10101.
+  target.dll:   Target  (20101) -> 20201.
+  target.dll:     Hidden(20201) -> 20202.
+  target.dll:   Target  (.....) -> 20202.
+  target.dll:   Target  (30202) -> 30302.
+  target.dll:     Hidden(30302) -> 30303.
+  target.dll:   Target  (.....) -> 30303.
+  
+  -------- Should load extend32.dll dynamically using withdll.exe -----------
+  	..\..\bin.X86\withdll.exe -d:..\..\bin.X86\extend32.dll ..\..\bin.X86\findfunc.exe
+  withdll.exe: Starting: `..\..\bin.X86\findfunc.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\extend32.dll'
+  extend.dll: Starting.
+  extend.dll: Detoured EntryPoint().
+  extend.dll: Error detouring Target(): 6
+  extend.dll: TrueHidden = 00000000 (error = 126)
+  extend.dll: Error detouring Hidden(): 6
+  extend.dll: Calling EntryPoint
+  findfunc.exe: Starting.
+  DLLs:
+    00030000: C:\Users\admin\source\repos\Detours\bin.X86\findfunc.exe
+    00080000: 
+    00F50000: C:\Users\admin\source\repos\Detours\bin.X86\extend32.dll
+    012F0000: C:\Users\admin\source\repos\Detours\bin.X86\target32.dll
+    75980000: C:\Windows\system32\KERNELBASE.dll
+    75CA0000: C:\Windows\system32\kernel32.dll
+    77660000: C:\Windows\SYSTEM32\ntdll.dll
+  findfunc.exe: Calling (10000).
+  findfunc.exe: Calling (20101).
+  findfunc.exe: Calling (30202).
+  target.dll:   Target  (10000) -> 10100.
+  target.dll:     Hidden(10100) -> 10101.
+  target.dll:   Target  (.....) -> 10101.
+  target.dll:   Target  (20101) -> 20201.
+  target.dll:     Hidden(20201) -> 20202.
+  target.dll:   Target  (.....) -> 20202.
+  target.dll:   Target  (30202) -> 30302.
+  target.dll:     Hidden(30302) -> 30303.
+  target.dll:   Target  (.....) -> 30303.
+  extend.dll: Removed Target() detours (0), 0/0 calls.
+  
+  -------- Test completed. ------------------------------------------------
+  	cd "C:\Users\admin\source\repos\Detours\samples\member"
+  
+  	..\..\bin.X86\member.exe
+    CMember::Target       = 00B41200
+      00B41200: 55                                  
+      00B41201: 8bec                                
+      00B41203: 51                                  
+    *CDetour::Real_Target = 00B41200
+      00B41200: 55                                  
+      00B41201: 8bec                                
+      00B41203: 51                                  
+    CDetour::Mine_Target  = 00B41220
+      00B41220: 55                                  
+      00B41221: 8bec                                
+      00B41223: 51                                  
+  
+  DetourTransactionCommit = 0
+  
+    CMember::Target       = 00B41200
+      00B41200: e91b0000 00                          [00B41220]
+      00B41205: cc                                   [FFFFFFFF]
+      00B41206: cc                                   [FFFFFFFF]
+    *CDetour::Real_Target = 00B300D8
+      00B300D8: 55                                  
+      00B300D9: 8bec                                
+      00B300DB: 51                                  
+    CDetour::Mine_Target  = 00B41220
+      00B41220: 55                                  
+      00B41221: 8bec                                
+      00B41223: 51                                  
+  
+  Calling CMember (w/o Detour):
+    CMember::Target!   (this:0012F76F)
+  Calling CMember (will be detoured):
+    CDetour::Mine_Target! (this:0012F76F)
+    CMember::Target!   (this:0012F76F)
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\region"
+  
+  	..\..\bin.X86\region.exe
+  70000000..80000000: Attach: 0, Trampoline: 6DCD00D8
+  
+  Sleep(10)
+  
+  70000000..80000000: Attach: 0, Trampoline: 6DCD00D8
+  
+  Sleep(10)
+  
+  40000000..80000000: Attach: 0, Trampoline: 3DCD00D8
+  
+  Sleep(20)
+  
+  Sleep(30)
+  
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\traceapi"
+  -------- Logging output to test.txt ------------
+  	start ..\..\bin.X86\syelogd.exe /o test.txt
+  	..\..\bin.X86\sleep5.exe 1
+  -------- Should load trcapi32.dll dynamically using withdll.exe ------------
+  	..\..\bin.X86\withdll -d:..\..\bin.X86\trcapi32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\trcapi32.dll'
+  sleepold.exe: Starting (at 00FE1170).
+    SleepEx = 75CE0296
+      75CE0296: e9c52f2b 9a                          [0FF93260]
+      75CE029B: 5d                                  
+      75CE029C: ebed                                 [75CE028B]
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  -------- Log from syelog -------------
+  	type test.txt
+  20180107140915449 3912 50.60: trcapi32: ######################################################### Binaries
+  20180107140915450 3912 50.60: trcapi32: ### 10000..20000: State=1000, Protect=00000004
+  20180107140915450 3912 50.60: trcapi32: ### 20000..30000: State=1000, Protect=00000004
+  20180107140915451 3912 50.60: trcapi32: ### 30000..34000: State=1000, Protect=00000002
+  20180107140915451 3912 50.60: trcapi32: ### 40000..41000: State=1000, Protect=00000004
+  20180107140915451 3912 50.60: trcapi32: ### 50000..51000: State=1000, Protect=00000004
+  20180107140915451 3912 50.60: trcapi32: ### 60000..61000: State=1000, Protect=00000004
+  20180107140915451 3912 50.60: trcapi32: ### 70000..71000: State=1000, Protect=00000004
+  20180107140915451 3912 50.60: trcapi32: ### b0000..1b0000: State=1000, Protect=00000004
+  20180107140915452 3912 50.60: trcapi32: ### 2bd000..2c0000: State=1000, Protect=00000004
+  20180107140915452 3912 50.60: trcapi32: ### 2c0000..327000: State=1000, Protect=00000002
+  20180107140915452 3912 50.60: trcapi32: ### 330000..3f8000: State=1000, Protect=00000002
+  20180107140915452 3912 50.60: trcapi32: ### 400000..501000: State=1000, Protect=00000002
+  20180107140915452 3912 50.60: trcapi32: ### 540000..550000: State=1000, Protect=00000004
+  20180107140915454 3912 50.60: trcapi32: ### 650000..690000: State=1000, Protect=00000004
+  20180107140915456 3912 50.60: trcapi32: ### fe0000..1001000: C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe
+  20180107140915456 3912 50.60: trcapi32: ### 1010000..1011000: State=1000, Protect=00000004
+  20180107140915458 3912 50.60: trcapi32: ### 1020000..1c20000: State=1000, Protect=00000002
+  20180107140915459 3912 50.60: trcapi32: ### ff50000..10025000: C:\Users\admin\source\repos\Detours\bin.X86\trcapi32.dll
+  20180107140915460 3912 50.60: trcapi32: ### 75980000..759ca000: C:\Windows\system32\KERNELBASE.dll
+  20180107140915461 3912 50.60: trcapi32: ### 75ab0000..75afe000: C:\Windows\system32\GDI32.dll
+  20180107140915464 3912 50.60: trcapi32: ### 75c80000..75c9f000: C:\Windows\system32\IMM32.DLL
+  20180107140915465 3912 50.60: trcapi32: ### 75ca0000..75d74000: C:\Windows\system32\kernel32.dll
+  20180107140915466 3912 50.60: trcapi32: ### 75d80000..75e21000: C:\Windows\system32\RPCRT4.dll
+  20180107140915467 3912 50.60: trcapi32: ### 75e30000..75edc000: C:\Windows\system32\msvcrt.dll
+  20180107140915468 3912 50.60: trcapi32: ### 75ee0000..75f7d000: C:\Windows\system32\USP10.dll
+  20180107140915469 3912 50.60: trcapi32: ### 76190000..76196000: C:\Windows\system32\NSI.dll
+  20180107140915470 3912 50.60: trcapi32: ### 761a0000..761b9000: C:\Windows\SYSTEM32\sechost.dll
+  20180107140915471 3912 50.60: trcapi32: ### 76350000..764ac000: C:\Windows\system32\ole32.dll
+  20180107140915472 3912 50.60: trcapi32: ### 77160000..7722c000: C:\Windows\system32\MSCTF.dll
+  20180107140915473 3912 50.60: trcapi32: ### 772f0000..773b9000: C:\Windows\system32\USER32.dll
+  20180107140915473 3912 50.60: trcapi32: ### 773c0000..77460000: C:\Windows\system32\ADVAPI32.dll
+  20180107140915474 3912 50.60: trcapi32: ### 77660000..7779c000: C:\Windows\SYSTEM32\ntdll.dll
+  20180107140915475 3912 50.60: trcapi32: ### 777b0000..777e5000: C:\Windows\system32\WS2_32.dll
+  20180107140915476 3912 50.60: trcapi32: ### 777f0000..777fa000: C:\Windows\system32\LPK.dll
+  20180107140915477 3912 50.60: trcapi32: ### 778a0000..778a1000: State=1000, Protect=00000002
+  20180107140915478 3912 50.60: trcapi32: ### 7f6f0000..7f7f0000: State=1000, Protect=00000002
+  20180107140915479 3912 50.60: trcapi32: ### 7ffb0000..7ffd3000: State=1000, Protect=00000002
+  20180107140915480 3912 50.60: trcapi32: ### 7ffd9000..7ffda000: State=1000, Protect=00000004
+  20180107140915481 3912 50.60: trcapi32: ### 7ffdf000..7ffe0000: State=1000, Protect=00000004
+  20180107140915482 3912 50.60: trcapi32: ### 7ffe0000..7fff0000: State=1000, Protect=00000003
+  20180107140915482 3912 50.60: trcapi32: ###
+  20180107140915483 3912 50.60: trcapi32: ### Env= 000d2a98 [3d3a3a3d 005c3a3a]
+  20180107140915492 3912 50.60: trcapi32: 001 +GetSystemTimeAsFileTime(2bf994)
+  20180107140915492 3912 50.60: trcapi32: 001 -GetSystemTimeAsFileTime() ->
+  20180107140915492 3912 50.60: trcapi32: 001 +GetCurrentThreadId()
+  20180107140915493 3912 50.60: trcapi32: 001 -GetCurrentThreadId() -> 480
+  20180107140915494 3912 50.60: trcapi32: 001 +GetCurrentProcessId()
+  20180107140915495 3912 50.60: trcapi32: 001 -GetCurrentProcessId() -> f48
+  20180107140915496 3912 50.60: trcapi32: 001 +QueryPerformanceCounter(2bf98c)
+  20180107140915497 3912 50.60: trcapi32: 001 -QueryPerformanceCounter() -> 1
+  20180107140915498 3912 50.60: trcapi32: 001 +IsProcessorFeaturePresent(a)
+  20180107140915499 3912 50.60: trcapi32: 001 -IsProcessorFeaturePresent() -> 1
+  20180107140915499 3912 50.60: trcapi32: 001 +LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
+  20180107140915499 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915500 3912 50.60: trcapi32: 001 +LoadLibraryExW(kernel32,0,800)
+  20180107140915501 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915502 3912 50.60: trcapi32: 001 +LoadLibraryExW(kernel32,0,0)
+  20180107140915503 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 75ca0000
+  20180107140915503 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,InitializeCriticalSectionEx)
+  20180107140915504 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf3879
+  20180107140915505 3912 50.60: trcapi32: 001 +LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
+  20180107140915506 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915507 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,FlsAlloc)
+  20180107140915509 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf418d
+  20180107140915509 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,FlsSetValue)
+  20180107140915510 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf76e6
+  20180107140915511 3912 50.60: trcapi32: 001 +LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
+  20180107140915520 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915520 3912 50.60: trcapi32: 001 +LoadLibraryExW(kernel32,0,800)
+  20180107140915521 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915522 3912 50.60: trcapi32: 001 +LoadLibraryExW(kernel32,0,0)
+  20180107140915523 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 75ca0000
+  20180107140915524 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,InitializeCriticalSectionEx)
+  20180107140915526 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf3879
+  20180107140915527 3912 50.60: trcapi32: 001 +LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
+  20180107140915530 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915530 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,FlsAlloc)
+  20180107140915532 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf418d
+  20180107140915533 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,FlsGetValue)
+  20180107140915535 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf1e16
+  20180107140915536 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,FlsSetValue)
+  20180107140915538 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75cf76e6
+  20180107140915539 3912 50.60: trcapi32: 001 +GetStartupInfoW(2bf8c8)
+  20180107140915540 3912 50.60: trcapi32: 001 -GetStartupInfoW() ->
+  20180107140915540 3912 50.60: trcapi32: 001 +GetStdHandle(fffffff6)
+  20180107140915541 3912 50.60: trcapi32: 001 -GetStdHandle() -> 428
+  20180107140915543 3912 50.60: trcapi32: 001 +GetFileType(428)
+  20180107140915544 3912 50.60: trcapi32: 001 -GetFileType() -> 3
+  20180107140915547 3912 50.60: trcapi32: 001 +GetStdHandle(fffffff5)
+  20180107140915547 3912 50.60: trcapi32: 001 -GetStdHandle() -> 434
+  20180107140915548 3912 50.60: trcapi32: 001 +GetFileType(434)
+  20180107140915550 3912 50.60: trcapi32: 001 -GetFileType() -> 3
+  20180107140915551 3912 50.60: trcapi32: 001 +GetStdHandle(fffffff4)
+  20180107140915552 3912 50.60: trcapi32: 001 -GetStdHandle() -> 43c
+  20180107140915553 3912 50.60: trcapi32: 001 +GetFileType(43c)
+  20180107140915554 3912 50.60: trcapi32: 001 -GetFileType() -> 3
+  20180107140915555 3912 50.60: trcapi32: 001 +GetCommandLineA()
+  20180107140915555 3912 50.60: trcapi32: 001 -GetCommandLineA() -> ..\..\bin.X86\sleepold.exe
+  20180107140915556 3912 50.60: trcapi32: 001 +GetCommandLineW()
+  20180107140915557 3912 50.60: trcapi32: 001 -GetCommandLineW() -> ..\..\bin.X86\sleepold.exe
+  20180107140915558 3912 50.60: trcapi32: 001 +GetACP()
+  20180107140915559 3912 50.60: trcapi32: 001 -GetACP() -> 4e4
+  20180107140915560 3912 50.60: trcapi32: 001 +IsValidCodePage(4e4)
+  20180107140915560 3912 50.60: trcapi32: 001 -IsValidCodePage() -> 1
+  20180107140915561 3912 50.60: trcapi32: 001 +GetCPInfo(4e4,2bf8e8)
+  20180107140915562 3912 50.60: trcapi32: 001 -GetCPInfo(,) -> 1
+  20180107140915565 3912 50.60: trcapi32: 001 +GetCPInfo(4e4,2bf1b0)
+  20180107140915565 3912 50.60: trcapi32: 001 -GetCPInfo(,) -> 1
+  20180107140915566 3912 50.60: trcapi32: 001 +LoadLibraryExW(api-ms-win-core-localization-l1-2-1,0,800)
+  20180107140915567 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140915568 3912 50.60: trcapi32: 001 +GetProcAddress(75ca0000,LCMapStringEx)
+  20180107140915569 3912 50.60: trcapi32: 001 -GetProcAddress(,) -> 75d2f72b
+  20180107140915570 3912 50.60: trcapi32: 001 +GetModuleFileNameA(0,ffabf8,104)
+  20180107140915571 3912 50.60: trcapi32: 001 -GetModuleFileNameA(,C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe,) -> 38
+  20180107140915572 3912 50.60: trcapi32: 001 +GetEnvironmentStringsW()
+  20180107140915573 3912 50.60: trcapi32: 001 -GetEnvironmentStringsW() -> =::=::\
+  20180107140915573 3912 50.60: trcapi32: 001 +FreeEnvironmentStringsW(=::=::\)
+  20180107140915574 3912 50.60: trcapi32: 001 -FreeEnvironmentStringsW() -> 1
+  20180107140915575 3912 50.60: trcapi32: 001 +IsProcessorFeaturePresent(a)
+  20180107140915576 3912 50.60: trcapi32: 001 -IsProcessorFeaturePresent() -> 1
+  20180107140915577 3912 50.60: trcapi32: 001 +SetUnhandledExceptionFilter(fe2944)
+  20180107140915578 3912 50.60: trcapi32: 001 -SetUnhandledExceptionFilter() -> 0
+  20180107140915579 3912 50.60: trcapi32: 001 +WriteFile(434,2be42c,f1,2be424,0)
+  20180107140915580 3912 50.60: trcapi32: 001 -WriteFile(,,,,) -> 1
+  20180107140916580 3912 50.60: trcapi32: 001 +SleepEx(3e8,0)
+  20180107140917580 3912 50.60: trcapi32: 001 -SleepEx(,) -> 0
+  20180107140918580 3912 50.60: trcapi32: 001 +WriteFile(434,2be428,a9,2be420,0)
+  20180107140918580 3912 50.60: trcapi32: 001 -WriteFile(,,,,) -> 1
+  20180107140918580 3912 50.60: trcapi32: 001 +GetModuleHandleW(<NULL>)
+  20180107140918581 3912 50.60: trcapi32: 001 -GetModuleHandleW() -> fe0000
+  20180107140918585 3912 50.60: trcapi32: 001 +GetModuleHandleW(<NULL>)
+  20180107140918585 3912 50.60: trcapi32: 001 -GetModuleHandleW() -> fe0000
+  20180107140918587 3912 50.60: trcapi32: 001 +LoadLibraryExW(api-ms-win-appmodel-runtime-l1-1-2,0,800)
+  20180107140918589 3912 50.60: trcapi32: 001 -LoadLibraryExW(,,) -> 0
+  20180107140918591 3912 50.60: trcapi32: 001 +ExitProcess(0)
+  20180107140918592 3912 50.60: trcapi32: 001   +GetCurrentThreadId()
+  20180107140918593 3912 50.60: trcapi32: 001   -GetCurrentThreadId() -> 480
+  20180107140918594 3912 50.60: trcapi32: 001   +LocalFree(cad80)
+  20180107140918596 3912 50.60: trcapi32: 001   -LocalFree() -> 0
+  20180107140918597 3912 50.60: trcapi32: 001   +LocalFree(cae10)
+  20180107140918599 3912 50.60: trcapi32: 001   -LocalFree() -> 0
+  20180107140918602 3912 50.60: trcapi32: 001   +GetCurrentProcessId()
+  20180107140918602 3912 50.60: trcapi32: 001   -GetCurrentProcessId() -> f48
+  20180107140918610 3912 50.50: trcapi32: ### Closing.
+  20180107140918611 ---- --.60: Client closed pipe.
+  	cd "C:\Users\admin\source\repos\Detours\samples\tracebld"
+  	del log.*.xml 2>nul
+  	..\..\bin.X86\tracebld.exe /o:log %COMSPEC% /c dir
+  TRACEBLD: Ready for clients.  Press Ctrl-C to stop.
+  TRACEBLD: Starting: `C:\Windows\system32\cmd.exe /c dir'
+  TRACEBLD:   with `C:\Users\admin\source\repos\Detours\bin.X86\trcbld32.dll'
+   Volume in drive C has no label.
+   Volume Serial Number is 2831-33D2
+  
+   Directory of C:\Users\admin\source\repos\Detours\samples\tracebld
+  
+  01/07/2018  07:39 PM    <DIR>          .
+  01/07/2018  07:39 PM    <DIR>          ..
+  01/07/2018  07:39 PM                 0 log.00000000.xml
+  01/07/2018  07:39 PM                 0 log.00000001.xml
+  04/12/2016  09:32 AM             5,064 Makefile
+  01/07/2018  01:40 PM    <DIR>          obj.X86
+  10/30/2015  12:40 PM            18,569 tracebld.cpp
+  10/30/2015  12:40 PM             1,727 tracebld.h
+  10/30/2015  12:40 PM           136,840 trcbld.cpp
+  10/30/2015  12:40 PM               596 trcbld.rc
+                 7 File(s)        162,796 bytes
+                 3 Dir(s)  38,595,715,072 bytes free
+  TRACEBLD: 1 processes.
+  -------- Log from log.00000000 ---------------------
+  	type log.00000000.xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <t:Process id="::0.::" par="" exe="cmd" xmlns:t="http://schemas.microsoft.com/research/tracebld/2008">
+  <t:Directory>C:\Users\admin\source\repos\Detours\samples\tracebld</t:Directory>
+  <t:Executable>%SYSDIR%\cmd.exe</t:Executable>
+  <t:Line>%SYSDIR%\cmd.exe /c dir</t:Line>
+  <t:Return>0</t:Return>
+  <t:Files>
+  </t:Files>
+  <t:Vars>
+  </t:Vars>
+  </t:Process>
+  
+  	cd "C:\Users\admin\source\repos\Detours\samples\tracemem"
+  -------- Logging output to test.txt ------------
+  	start ..\..\bin.X86\syelogd.exe /o test.txt
+  	..\..\bin.X86\sleep5.exe 1
+  -------- Should load trcmem32.dll dynamically using withdll.exe ------------
+  	..\..\bin.X86\withdll -d:..\..\bin.X86\trcmem32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\trcmem32.dll'
+  sleepold.exe: Starting (at 01041170).
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  -------- Log from syelog -------------
+  	type test.txt
+  20180107140920144 5096 50.60: trcmem32: ##########################################
+  20180107140920145 5096 50.60: trcmem32: ### C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe
+  20180107140920146 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920146 5096 50.60: trcmem32: 001 HeapAlloc() -> 36be08
+  20180107140920146 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc() -> 36be30
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc() -> 36be58
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc() -> 36be80
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bea8
+  20180107140920147 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bed0
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bef8
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bf20
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bf48
+  20180107140920148 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920149 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bf70
+  20180107140920149 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920150 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bf98
+  20180107140920151 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920152 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bfc0
+  20180107140920153 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920154 5096 50.60: trcmem32: 001 HeapAlloc() -> 36bfe8
+  20180107140920155 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920156 5096 50.60: trcmem32: 001 HeapAlloc() -> 36c010
+  20180107140920157 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920158 5096 50.60: trcmem32: 001 HeapAlloc() -> 36c038
+  20180107140920161 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 364))
+  20180107140920161 5096 50.60: trcmem32: 001 HeapAlloc() -> 36d470
+  20180107140920161 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, c00))
+  20180107140920161 5096 50.60: trcmem32: 001 HeapAlloc() -> 36d7e0
+  20180107140920162 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920163 5096 50.60: trcmem32: 001 HeapAlloc() -> 36c060
+  20180107140920164 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920165 5096 50.60: trcmem32: 001 HeapAlloc() -> 36c088
+  20180107140920166 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920167 5096 50.60: trcmem32: 001 HeapAlloc() -> 36c0b0
+  20180107140920168 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920169 5096 50.60: trcmem32: 001 HeapAlloc() -> 36c0d8
+  20180107140920169 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920170 5096 50.60: trcmem32: 001   HeapAlloc(350000, 800000, 7f8))
+  20180107140920172 5096 50.60: trcmem32: 001   HeapAlloc() -> 36e3e8
+  20180107140920173 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e400
+  20180107140920174 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920175 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e428
+  20180107140920176 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920177 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e450
+  20180107140920177 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920178 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e478
+  20180107140920179 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920180 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e4a0
+  20180107140920181 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920181 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e4c8
+  20180107140920182 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920183 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e4f0
+  20180107140920184 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920185 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e518
+  20180107140920186 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920187 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e540
+  20180107140920188 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920188 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e568
+  20180107140920189 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920190 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e590
+  20180107140920191 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920192 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e5b8
+  20180107140920194 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920194 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e5e0
+  20180107140920195 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920196 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e608
+  20180107140920197 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920198 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e630
+  20180107140920199 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920199 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e658
+  20180107140920200 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920201 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e680
+  20180107140920202 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920203 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e6a8
+  20180107140920204 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920204 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e6d0
+  20180107140920205 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920206 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e6f8
+  20180107140920207 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920208 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e720
+  20180107140920208 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920209 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e748
+  20180107140920210 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920218 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e770
+  20180107140920219 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920220 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e798
+  20180107140920222 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920223 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e7c0
+  20180107140920225 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920225 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e7e8
+  20180107140920229 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920231 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e810
+  20180107140920232 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920233 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e838
+  20180107140920234 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920235 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e860
+  20180107140920235 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920237 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e888
+  20180107140920238 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920239 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e8b0
+  20180107140920240 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920241 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e8d8
+  20180107140920242 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920243 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e900
+  20180107140920244 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920244 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e928
+  20180107140920245 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920246 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e950
+  20180107140920247 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920248 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e978
+  20180107140920248 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920249 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e9a0
+  20180107140920250 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920251 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e9c8
+  20180107140920252 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920253 5096 50.60: trcmem32: 001 HeapAlloc() -> 36e9f0
+  20180107140920253 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920254 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ea18
+  20180107140920255 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920256 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ea40
+  20180107140920257 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920258 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ea68
+  20180107140920259 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920260 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ea90
+  20180107140920261 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920262 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eab8
+  20180107140920263 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920264 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eae0
+  20180107140920264 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920265 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eb08
+  20180107140920266 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920267 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eb30
+  20180107140920268 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920269 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eb58
+  20180107140920270 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920271 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eb80
+  20180107140920272 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920272 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eba8
+  20180107140920273 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920274 5096 50.60: trcmem32: 001   HeapAlloc(350000, 800000, 7f8))
+  20180107140920275 5096 50.60: trcmem32: 001   HeapAlloc() -> 36ebe8
+  20180107140920276 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ec00
+  20180107140920278 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920278 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ec28
+  20180107140920279 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920280 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ec50
+  20180107140920280 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920281 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ec78
+  20180107140920282 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920283 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eca0
+  20180107140920284 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920285 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ecc8
+  20180107140920285 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920287 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ecf0
+  20180107140920288 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920288 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ed18
+  20180107140920289 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920290 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ed40
+  20180107140920291 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920292 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ed68
+  20180107140920293 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 220))
+  20180107140920294 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f3e8
+  20180107140920295 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 80))
+  20180107140920296 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f610
+  20180107140920297 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 208))
+  20180107140920298 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f698
+  20180107140920299 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 39))
+  20180107140920300 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f8a8
+  20180107140920301 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 23))
+  20180107140920301 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f698
+  20180107140920302 5096 50.60: trcmem32: 001 HeapAlloc(350000, 180000, 1eec))
+  20180107140920303 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ffe8
+  20180107140920304 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, f76))
+  20180107140920305 5096 50.60: trcmem32: 001 HeapAlloc() -> 371ee0
+  20180107140920306 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, c4))
+  20180107140920306 5096 50.60: trcmem32: 001 HeapAlloc() -> 372e60
+  20180107140920307 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 1f))
+  20180107140920308 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ed90
+  20180107140920309 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 27))
+  20180107140920310 5096 50.60: trcmem32: 001 HeapAlloc() -> 372f30
+  20180107140920311 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 106))
+  20180107140920311 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f6c8
+  20180107140920312 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 31))
+  20180107140920313 5096 50.60: trcmem32: 001 HeapAlloc() -> 372f60
+  20180107140920314 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 16))
+  20180107140920315 5096 50.60: trcmem32: 001   HeapAlloc(350000, 800000, 7f8))
+  20180107140920315 5096 50.60: trcmem32: 001   HeapAlloc() -> 36ffe8
+  20180107140920317 5096 50.60: trcmem32: 001 HeapAlloc() -> 370000
+  20180107140920318 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 24))
+  20180107140920318 5096 50.60: trcmem32: 001 HeapAlloc() -> 372fa0
+  20180107140920319 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 14))
+  20180107140920320 5096 50.60: trcmem32: 001 HeapAlloc() -> 370020
+  20180107140920321 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, d))
+  20180107140920322 5096 50.60: trcmem32: 001 HeapAlloc() -> 372fd0
+  20180107140920323 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 16))
+  20180107140920323 5096 50.60: trcmem32: 001 HeapAlloc() -> 370040
+  20180107140920324 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 155))
+  20180107140920325 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f7d8
+  20180107140920326 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 188))
+  20180107140920327 5096 50.60: trcmem32: 001 HeapAlloc() -> 3707e8
+  20180107140920328 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, c5))
+  20180107140920329 5096 50.60: trcmem32: 001 HeapAlloc() -> 370978
+  20180107140920330 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 2a))
+  20180107140920330 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f938
+  20180107140920331 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 17))
+  20180107140920332 5096 50.60: trcmem32: 001 HeapAlloc() -> 370060
+  20180107140920333 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 3d))
+  20180107140920334 5096 50.60: trcmem32: 001 HeapAlloc() -> 36f970
+  20180107140920335 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 1d))
+  20180107140920335 5096 50.60: trcmem32: 001 HeapAlloc() -> 36edb8
+  20180107140920336 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 29))
+  20180107140920337 5096 50.60: trcmem32: 001 HeapAlloc() -> 370a48
+  20180107140920338 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 17))
+  20180107140920339 5096 50.60: trcmem32: 001 HeapAlloc() -> 370080
+  20180107140920340 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, e))
+  20180107140920341 5096 50.60: trcmem32: 001 HeapAlloc() -> 370a80
+  20180107140920342 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 4dd))
+  20180107140920343 5096 50.60: trcmem32: 001 HeapAlloc() -> 370a98
+  20180107140920343 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 3e))
+  20180107140920345 5096 50.60: trcmem32: 001 HeapAlloc() -> 370f80
+  20180107140920346 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 70))
+  20180107140920347 5096 50.60: trcmem32: 001 HeapAlloc() -> 370fc8
+  20180107140920347 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 1b))
+  20180107140920348 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ede0
+  20180107140920349 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 45))
+  20180107140920350 5096 50.60: trcmem32: 001 HeapAlloc() -> 371040
+  20180107140920351 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 12))
+  20180107140920352 5096 50.60: trcmem32: 001 HeapAlloc() -> 3700a0
+  20180107140920353 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 18))
+  20180107140920353 5096 50.60: trcmem32: 001 HeapAlloc() -> 3700c0
+  20180107140920354 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 1b))
+  20180107140920355 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ee08
+  20180107140920356 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 1e))
+  20180107140920357 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ee30
+  20180107140920358 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, c))
+  20180107140920359 5096 50.60: trcmem32: 001 HeapAlloc() -> 371090
+  20180107140920360 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 41))
+  20180107140920361 5096 50.60: trcmem32: 001 HeapAlloc() -> 3710a8
+  20180107140920362 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 17))
+  20180107140920363 5096 50.60: trcmem32: 001 HeapAlloc() -> 3700e0
+  20180107140920364 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 14))
+  20180107140920364 5096 50.60: trcmem32: 001 HeapAlloc() -> 370100
+  20180107140920365 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, f))
+  20180107140920367 5096 50.60: trcmem32: 001 HeapAlloc() -> 3710f8
+  20180107140920367 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 16))
+  20180107140920368 5096 50.60: trcmem32: 001 HeapAlloc() -> 370120
+  20180107140920369 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 27))
+  20180107140920370 5096 50.60: trcmem32: 001 HeapAlloc() -> 371110
+  20180107140920371 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 26))
+  20180107140920372 5096 50.60: trcmem32: 001 HeapAlloc() -> 371140
+  20180107140920372 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 14))
+  20180107140920373 5096 50.60: trcmem32: 001 HeapAlloc() -> 370140
+  20180107140920374 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, f))
+  20180107140920375 5096 50.60: trcmem32: 001 HeapAlloc() -> 371170
+  20180107140920376 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 1b))
+  20180107140920377 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ee58
+  20180107140920379 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 3c))
+  20180107140920379 5096 50.60: trcmem32: 001 HeapAlloc() -> 371188
+  20180107140920380 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 3b))
+  20180107140920381 5096 50.60: trcmem32: 001 HeapAlloc() -> 3711d0
+  20180107140920382 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 19))
+  20180107140920383 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ee80
+  20180107140920384 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 50))
+  20180107140920385 5096 50.60: trcmem32: 001 HeapAlloc() -> 371218
+  20180107140920385 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 17))
+  20180107140920386 5096 50.60: trcmem32: 001 HeapAlloc() -> 370160
+  20180107140920387 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, c))
+  20180107140920388 5096 50.60: trcmem32: 001   HeapAlloc(350000, 800000, 3f8))
+  20180107140920389 5096 50.60: trcmem32: 001   HeapAlloc() -> 371270
+  20180107140920390 5096 50.60: trcmem32: 001 HeapAlloc() -> 371288
+  20180107140920391 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 17))
+  20180107140920392 5096 50.60: trcmem32: 001 HeapAlloc() -> 370180
+  20180107140920392 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 12))
+  20180107140920393 5096 50.60: trcmem32: 001 HeapAlloc() -> 3701a0
+  20180107140920395 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 19))
+  20180107140920395 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eea8
+  20180107140920397 5096 50.60: trcmem32: 001 HeapAlloc(350000, 8, 800))
+  20180107140920397 5096 50.60: trcmem32: 001 HeapAlloc() -> 371670
+  20180107140920398 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920399 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eed0
+  20180107140920400 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920401 5096 50.60: trcmem32: 001 HeapAlloc() -> 36eef8
+  20180107140920402 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 20))
+  20180107140920402 5096 50.60: trcmem32: 001 HeapAlloc() -> 36ef20
+  20180107140920403 5096 50.60: trcmem32: 001 HeapAlloc(350000, 2c0000, 440))
+  20180107140920404 5096 50.60: trcmem32: 001 HeapAlloc() -> 371e78
+  20180107140920405 5096 50.60: trcmem32: 001 HeapAlloc(350000, 0, 1000))
+  20180107140920406 5096 50.60: trcmem32: 001 HeapAlloc() -> 372fe8
+  20180107140923408 5096 50.50: trcmem32: ### Closing.
+  20180107140923409 ---- --.60: Client closed pipe.
+  	cd "C:\Users\admin\source\repos\Detours\samples\tracereg"
+  -------- Logging output to test.txt ------------
+  	start ..\..\bin.X86\syelogd.exe /o test.txt
+  	..\..\bin.X86\sleep5.exe 1
+  -------- Should load trcreg32.dll dynamically using withdll.exe ------------
+  	..\..\bin.X86\withdll -d:..\..\bin.X86\trcreg32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\trcreg32.dll'
+  sleepold.exe: Starting (at 013E1170).
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  -------- Log from syelog -------------
+  	type test.txt
+  20180107140924731 2000 50.60: trcreg32: ######################################################### Binaries
+  20180107140924731 2000 50.60: trcreg32: ### 013e0000: C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe 00000000
+  20180107140924733 2000 50.60: trcreg32: ### 0fd00000: C:\Users\admin\source\repos\Detours\bin.X86\trcreg32.dll 00031768
+  20180107140924733 2000 50.60: trcreg32: ### 75980000: C:\Windows\system32\KERNELBASE.dll 0004984c
+  20180107140924733 2000 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+  20180107140924733 2000 50.60: trcreg32: ### 75d80000: C:\Windows\system32\RPCRT4.dll 000a547c
+  20180107140924734 2000 50.60: trcreg32: ### 75e30000: C:\Windows\system32\msvcrt.dll 000ae448
+  20180107140924734 2000 50.60: trcreg32: ### 761a0000: C:\Windows\SYSTEM32\sechost.dll 00025332
+  20180107140924734 2000 50.60: trcreg32: ### 773c0000: C:\Windows\system32\ADVAPI32.dll 000aa124
+  20180107140924734 2000 50.60: trcreg32: ### 77660000: C:\Windows\SYSTEM32\ntdll.dll 00141148
+  20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
+  20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,800)
+  20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924735 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,0)
+  20180107140924736 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 75ca0000
+  20180107140924736 2000 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+  20180107140924739 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,InitializeCriticalSectionEx) -> 75cf3879
+  20180107140924739 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
+  20180107140924741 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924742 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsAlloc) -> 75cf418d
+  20180107140924743 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsSetValue) -> 75cf76e6
+  20180107140924744 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-synch-l1-2-0,0,800)
+  20180107140924747 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924748 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,800)
+  20180107140924749 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924750 2000 50.60: trcreg32: 001 LoadLibraryExW(kernel32,0,0)
+  20180107140924751 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 75ca0000
+  20180107140924753 2000 50.60: trcreg32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+  20180107140924753 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,InitializeCriticalSectionEx) -> 75cf3879
+  20180107140924754 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-fibers-l1-1-1,0,800)
+  20180107140924756 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924756 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsAlloc) -> 75cf418d
+  20180107140924757 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsGetValue) -> 75cf1e16
+  20180107140924757 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,FlsSetValue) -> 75cf76e6
+  20180107140924758 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-core-localization-l1-2-1,0,800)
+  20180107140924759 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140924760 2000 50.60: trcreg32: 001 GetProcAddress(75ca0000:kernel32.dll,LCMapStringEx) -> 75d2f72b
+  20180107140927762 2000 50.60: trcreg32: 001 LoadLibraryExW(api-ms-win-appmodel-runtime-l1-1-2,0,800)
+  20180107140927762 2000 50.60: trcreg32: 001 LoadLibraryExW(,,) -> 0
+  20180107140927763 2000 50.50: trcreg32: ### Closing.
+  20180107140927765 ---- --.60: Client closed pipe.
+  	cd "C:\Users\admin\source\repos\Detours\samples\traceser"
+  -------- Logging output to test.txt ------------
+  	start ..\..\bin.X86\syelogd.exe /o test.txt
+  	..\..\bin.X86\sleep5.exe 1
+  -------- Should load trcser32.dll dynamically using withdll.exe ------------
+  	..\..\bin.X86\withdll -d:..\..\bin.X86\trcser32.dll ..\..\bin.X86\sleepold.exe
+  withdll.exe: Starting: `..\..\bin.X86\sleepold.exe'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\trcser32.dll'
+  sleepold.exe: Starting (at 00051170).
+    SleepEx = 75CE0296
+      75CE0296: 8bff                                
+      75CE0298: 55                                  
+      75CE0299: 8bec                                
+  
+  sleepold.exe: Calling Sleep for 1 second.
+  sleepold.exe: Calling SleepEx for 1 second.
+  sleepold.exe: Calling Sleep again for 1 second.
+  sleepold.exe: Done sleeping.
+  
+  -------- Log from syelog -------------
+  	type test.txt
+  20180107140928994 3564 50.60: trcser32: ##################################################################
+  20180107140928995 3564 50.60: trcser32: ### C:\Users\admin\source\repos\Detours\bin.X86\sleepold.exe
+  20180107140928996 3564 50.60: trcser32: 001 GetCurrentThreadId()
+  20180107140928996 3564 50.60: trcser32: 001 GetCurrentThreadId() -> 1224
+  20180107140928996 3564 50.60: trcser32: 001 WriteFile(434,1ee354,db,1ee34c,0)
+  20180107140928996 3564 50.60: trcser32: 001   434:   sleepold.exe: Starting (at 00051170).\r\n
+  20180107140928996 3564 50.60: trcser32: 001   434:     SleepEx = 75CE0296\r\n
+  20180107140928997 3564 50.60: trcser32: 001   434:       75CE0296: 8bff                                \r\n
+  20180107140928997 3564 50.60: trcser32: 001   434:       75CE0298: 55                                  \r\n
+  20180107140928997 3564 50.60: trcser32: 001   434:       75CE0299: 8bec                                \r\n
+  20180107140928997 3564 50.60: trcser32: 001   434:   \r\n
+  20180107140928997 3564 50.60: trcser32: 001 WriteFile(,,,,) -> 1
+  20180107140931998 3564 50.60: trcser32: 001 WriteFile(434,1ee350,a9,1ee348,0)
+  20180107140931998 3564 50.60: trcser32: 001   434:   sleepold.exe: Calling Sleep for 1 second.\r\n
+  20180107140931998 3564 50.60: trcser32: 001   434:   sleepold.exe: Calling SleepEx for 1 second.\r\n
+  20180107140931998 3564 50.60: trcser32: 001   434:   sleepold.exe: Calling Sleep again for 1 second.\r\n
+  20180107140931999 3564 50.60: trcser32: 001   434:   sleepold.exe: Done sleeping.\r\n
+  20180107140932000 3564 50.60: trcser32: 001   434:   \r\n
+  20180107140932002 3564 50.60: trcser32: 001 WriteFile(,,,,) -> 1
+  20180107140932007 3564 50.50: trcser32: ### Closing.
+  20180107140932009 ---- --.60: Client closed pipe.
+  	cd "C:\Users\admin\source\repos\Detours\samples\tracelnk"
+  -------- Logging output to test.txt ------------
+  	start ..\..\bin.X86\syelogd.exe /o test.txt
+  	..\..\bin.X86\sleep5.exe 1
+  -------- Should load trclnk32.dll dynamically using withdll.exe ------------
+  .
+  	..\..\bin.X86\withdll -d:..\..\bin.X86\trclnk32.dll C:\Windows\system32\cmd.exe /c dir
+  withdll.exe: Starting: `C:\Windows\system32\cmd.exe /c dir'
+  withdll.exe:   with `C:\Users\admin\source\repos\Detours\bin.X86\trclnk32.dll'
+   Volume in drive C has no label.
+   Volume Serial Number is 2831-33D2
+  
+   Directory of C:\Users\admin\source\repos\Detours\samples\tracelnk
+  
+  01/07/2018  01:48 PM    <DIR>          .
+  01/07/2018  01:48 PM    <DIR>          ..
+  10/30/2015  12:46 PM             3,439 Makefile
+  01/07/2018  01:40 PM    <DIR>          obj.X86
+  01/07/2018  07:39 PM                 0 test.txt
+  10/30/2015  12:40 PM            19,609 trclnk.cpp
+  10/30/2015  12:40 PM               604 trclnk.rc
+                 4 File(s)         23,652 bytes
+                 3 Dir(s)  38,595,670,016 bytes free
+  -------- Log from syelog -------------
+  	type test.txt
+  20180107140933251 5316 50.60: trclnk32: ######################################################### Binaries
+  20180107140933251 5316 50.60: trclnk32: ### 0f140000: C:\Users\admin\source\repos\Detours\bin.X86\trclnk32.dll 000250bc
+  20180107140933252 5316 50.60: trclnk32: ### 4a850000: C:\Windows\system32\cmd.exe 00057b3d
+  20180107140933253 5316 50.60: trclnk32: ### 69ee0000: C:\Windows\system32\WINBRAND.dll 00012985
+  20180107140933253 5316 50.60: trclnk32: ### 75980000: C:\Windows\system32\KERNELBASE.dll 0004984c
+  20180107140933253 5316 50.60: trclnk32: ### 75ab0000: C:\Windows\system32\GDI32.dll 000593d8
+  20180107140933253 5316 50.60: trclnk32: ### 75ca0000: C:\Windows\system32\kernel32.dll 000d70eb
+  20180107140933253 5316 50.60: trclnk32: ### 75e30000: C:\Windows\system32\msvcrt.dll 000ae448
+  20180107140933253 5316 50.60: trclnk32: ### 75ee0000: C:\Windows\system32\USP10.dll 000a2ada
+  20180107140933253 5316 50.60: trclnk32: ### 772f0000: C:\Windows\system32\USER32.dll 000cea65
+  20180107140933254 5316 50.60: trclnk32: ### 77660000: C:\Windows\SYSTEM32\ntdll.dll 00141148
+  20180107140933254 5316 50.60: trclnk32: ### 777f0000: C:\Windows\system32\LPK.dll 000093af
+  20180107140933254 5316 50.60: trclnk32: ###
+  20180107140933254 5316 50.60: trclnk32: msvcrt.dll [4a87286c 4a851000]
+  20180107140933255 5316 50.60: trclnk32:   exit 8494974900899938304 4a8501e0
+  20180107140933256 5316 50.60: trclnk32:   _getch 8496312383780683776 4a8501e0
+  20180107140933257 5316 50.60: trclnk32:   iswdigit 8494844617361981440 4a8501e0
+  20180107140933258 5316 50.60: trclnk32:   wcstol 8494913993968713728 4a8501e0
+  20180107140933259 5316 50.60: trclnk32:   _vsnwprintf 8494839815588544512 4a8501e0
+  20180107140933260 5316 50.60: trclnk32:   _wcsicmp 8494820140343361536 4a8501e0
+  20180107140933261 5316 50.60: trclnk32:   _controlfp 8494881678634778624 4a8501e0
+  20180107140933262 5316 50.60: trclnk32:   ?terminate@@YAXXZ 8496148238720565248 4a8501e0
+  20180107140933263 5316 50.60: trclnk32:   _except_handler4_common 8495264609328955392 4a8501e0
+  20180107140933264 5316 50.60: trclnk32:   __set_app_type 8494958794772578304 4a8501e0
+  20180107140933265 5316 50.60: trclnk32:   __p__fmode 8494958562844344320 4a8501e0
+  20180107140933266 5316 50.60: trclnk32:   __p__commode 8494958515599704064 4a8501e0
+  20180107140933267 5316 50.60: trclnk32:   __setusermatherr 8497298181854330880 4a8501e0
+  20180107140933268 5316 50.60: trclnk32:   _amsg_exit 8496518911578079232 4a8501e0
+  20180107140933269 5316 50.60: trclnk32:   _initterm 8494845875787399168 4a8501e0
+  20180107140933270 5316 50.60: trclnk32:   _XcptFilter 8495438667173593088 4a8501e0
+  20180107140933271 5316 50.60: trclnk32:   _exit 8496518709714616320 4a8501e0
+  20180107140933272 5316 50.60: trclnk32:   _cexit 8494976180800192512 4a8501e0
+  20180107140933273 5316 50.60: trclnk32:   __getmainargs 8494962900761313280 4a8501e0
+  20180107140933273 5316 50.60: trclnk32:   calloc 8494849195797118976 4a8501e0
+  20180107140933274 5316 50.60: trclnk32:   free 8494801083573469184 4a8501e0
+  20180107140933275 5316 50.60: trclnk32:   _wcslwr 8494909458483249152 4a8501e0
+  20180107140933276 5316 50.60: trclnk32:   qsort 8494866306946826240 4a8501e0
+  20180107140933277 5316 50.60: trclnk32:   _dup2 8494966418339528704 4a8501e0
+  20180107140933278 5316 50.60: trclnk32:   _dup 8494968436974157824 4a8501e0
+  20180107140933278 5316 50.60: trclnk32:   _open_osfhandle 8494960779047469056 4a8501e0
+  20180107140933280 5316 50.60: trclnk32:   _close 8494979539464617984 4a8501e0
+  20180107140933280 5316 50.60: trclnk32:   swscanf 8495120994212511744 4a8501e0
+  20180107140933281 5316 50.60: trclnk32:   _ultoa 8496067231342395392 4a8501e0
+  20180107140933282 5316 50.60: trclnk32:   _pipe 8495133136085057536 4a8501e0
+  20180107140933283 5316 50.60: trclnk32:   _setmode 8495139591420903424 4a8501e0
+  20180107140933284 5316 50.60: trclnk32:   wcsncmp 8494827239924301824 4a8501e0
+  20180107140933285 5316 50.60: trclnk32:   iswxdigit 8494932565407301632 4a8501e0
+  20180107140933286 5316 50.60: trclnk32:   _wtol 8494852983958274048 4a8501e0
+  20180107140933286 5316 50.60: trclnk32:   time 8494904935882686464 4a8501e0
+  20180107140933287 5316 50.60: trclnk32:   srand 8494905275185102848 4a8501e0
+  20180107140933288 5316 50.60: trclnk32:   fflush 8494986548851245056 4a8501e0
+  20180107140933289 5316 50.60: trclnk32:   _get_osfhandle 8494900164174020608 4a8501e0
+  20180107140933290 5316 50.60: trclnk32:   _setjmp3 8494894932903854080 4a8501e0
+  20180107140933291 5316 50.60: trclnk32:   wcsstr 8494843814203097088 4a8501e0
+  20180107140933292 5316 50.60: trclnk32:   _local_unwind4 8495265970833588224 4a8501e0
+  20180107140933292 5316 50.60: trclnk32:   _errno 8494815531843452928 4a8501e0
+  20180107140933293 5316 50.60: trclnk32:   wcstoul 8494830242106441728 4a8501e0
+  20180107140933294 5316 50.60: trclnk32:   iswalpha 8494845759823282176 4a8501e0
+  20180107140933295 5316 50.60: trclnk32:   rand 8494844909419757568 4a8501e0
+  20180107140933296 5316 50.60: trclnk32:   wcsrchr 8494817211175665664 4a8501e0
+  20180107140933297 5316 50.60: trclnk32:   memcpy 8494801616149413888 4a8501e0
+  20180107140933298 5316 50.60: trclnk32:   printf 8495132195487219712 4a8501e0
+  20180107140933299 5316 50.60: trclnk32:   _iob 8497493151894732800 4a8501e0
+  20180107140933300 5316 50.60: trclnk32:   fprintf 8494982966848520192 4a8501e0
+  20180107140933301 5316 50.60: trclnk32:   towlower 8494823889849810944 4a8501e0
+  20180107140933302 5316 50.60: trclnk32:   realloc 8494827991543578624 4a8501e0
+  20180107140933302 5316 50.60: trclnk32:   setlocale 8495005532606693376 4a8501e0
+  20180107140933303 5316 50.60: trclnk32:   _wcsupr 8494873844614430720 4a8501e0
+  20180107140933304 5316 50.60: trclnk32:   _wpopen 8495322505488105472 4a8501e0
+  20180107140933305 5316 50.60: trclnk32:   ferror 8494995366419103744 4a8501e0
+  20180107140933306 5316 50.60: trclnk32:   fgets 8495272726817144832 4a8501e0
+  20180107140933307 5316 50.60: trclnk32:   feof 8495136803987128320 4a8501e0
+  20180107140933308 5316 50.60: trclnk32:   _pclose 8495319782478839808 4a8501e0
+  20180107140933309 5316 50.60: trclnk32:   memmove 8494807431535132672 4a8501e0
+  20180107140933310 5316 50.60: trclnk32:   wcschr 8494820655739437056 4a8501e0
+  20180107140933310 5316 50.60: trclnk32:   _tell 8494997509607784448 4a8501e0
+  20180107140933311 5316 50.60: trclnk32:   iswspace 8494821111005970432 4a8501e0
+  20180107140933312 5316 50.60: trclnk32:   memset 8494799966881972224 4a8501e0
+  20180107140933313 5316 50.60: trclnk32:   wcsspn 8494914883026944000 4a8501e0
+  20180107140933314 5316 50.60: trclnk32:   towupper 8494904283047657472 4a8501e0
+  20180107140933315 5316 50.60: trclnk32:   longjmp 8494997750125953024 4a8501e0
+  20180107140933316 5316 50.60: trclnk32:   _wcsnicmp 8494821214085185536 4a8501e0
+  20180107140933317 5316 50.60: trclnk32: ntdll.dll [4a872980 4a851114]
+  20180107140933318 5316 50.60: trclnk32:   RtlNtStatusToDosError 8605037917510828032 4a8501e0
+  20180107140933318 5316 50.60: trclnk32:   NtSetInformationProcess 8604802978504769536 4a8501e0
+  20180107140933319 5316 50.60: trclnk32:   NtQueryInformationProcess 8604796175276572672 4a8501e0
+  20180107140933320 5316 50.60: trclnk32:   RtlFindLeastSignificantBit 8603804205334921216 4a8501e0
+  20180107140933321 5316 50.60: trclnk32:   RtlFreeHeap 8605020346799620096 4a8501e0
+  20180107140933322 5316 50.60: trclnk32:   NtFsControlFile 8604789303328899072 4a8501e0
+  20180107140933323 5316 50.60: trclnk32:   RtlDosPathNameToNtPathName_U 8605296788074659840 4a8501e0
+  20180107140933324 5316 50.60: trclnk32:   NtQueryInformationToken 8604796381435002880 4a8501e0
+  20180107140933328 5316 50.60: trclnk32:   NtClose 8604783530892853248 4a8501e0
+  20180107140933328 5316 50.60: trclnk32:   NtOpenProcessToken 8604793220339073024 4a8501e0
+  20180107140933329 5316 50.60: trclnk32:   NtOpenThreadToken 8604793770094886912 4a8501e0
+  20180107140933329 5316 50.60: trclnk32: KERNEL32.dll [4a8729b0 4a851144]
+  20180107140933333 5316 50.60: trclnk32:   GetDateFormatW 8488915496614232064 4a8501e0
+  20180107140933333 5316 50.60: trclnk32:   UnhandledExceptionFilter 8489264647390625792 4a8501e0
+  20180107140933333 5316 50.60: trclnk32:   GetCurrentProcess 8488948636581888000 4a8501e0
+  20180107140933334 5316 50.60: trclnk32:   GetSystemTimeAsFileTime 8489056453145919488 4a8501e0
+  20180107140933335 5316 50.60: trclnk32:   GetCurrentProcessId 8488945290802364416 4a8501e0
+  20180107140933337 5316 50.60: trclnk32:   GetTickCount 8488927269119590400 4a8501e0
+  20180107140933338 5316 50.60: trclnk32:   QueryPerformanceCounter 8488928639214157824 4a8501e0
+  20180107140933340 5316 50.60: trclnk32:   GetModuleHandleA 8488950225719787520 4a8501e0
+  20180107140933341 5316 50.60: trclnk32:   SetUnhandledExceptionFilter 8489070897120935936 4a8501e0
+  20180107140933342 5316 50.60: trclnk32:   Sleep 8488927157450440704 4a8501e0
+  20180107140933342 5316 50.60: trclnk32:   InterlockedExchange 8488932397310541824 4a8501e0
+  20180107140933344 5316 50.60: trclnk32:   LoadLibraryExA 8488801486707359744 4a8501e0
+  20180107140933345 5316 50.60: trclnk32:   InterlockedCompareExchange 8488928583379582976 4a8501e0
+  20180107140933348 5316 50.60: trclnk32:   FreeLibrary 8488961835016388608 4a8501e0
+  20180107140933349 5316 50.60: trclnk32:   DelayLoadFailureHook 8488162198005219328 4a8501e0
+  20180107140933351 5316 50.60: trclnk32:   CreateHardLinkW 8490251162723811328 4a8501e0
+  20180107140933351 5316 50.60: trclnk32:   CreateSymbolicLinkW 8490018298186956800 4a8501e0
+  20180107140933352 5316 50.60: trclnk32:   GetVolumePathNameW 8489032096386383872 4a8501e0
+  20180107140933354 5316 50.60: trclnk32:   GetThreadLocale 8488745695082184704 4a8501e0
+  20180107140933354 5316 50.60: trclnk32:   GetThreadGroupAffinity 8490132084755529728 4a8501e0
+  20180107140933355 5316 50.60: trclnk32:   GetNumaNodeProcessorMaskEx 8490092347718107136 4a8501e0
+  20180107140933359 5316 50.60: trclnk32:   SetProcessAffinityMask 8490104854662873088 4a8501e0
+  20180107140933359 5316 50.60: trclnk32:   ResumeThread 8488738960573464576 4a8501e0
+  20180107140933360 5316 50.60: trclnk32:   FindFirstFileExW 8489133887111299072 4a8501e0
+  20180107140933362 5316 50.60: trclnk32:   DeviceIoControl 8488905042663833600 4a8501e0
+  20180107140933362 5316 50.60: trclnk32:   FindFirstStreamW 8489224798684053504 4a8501e0
+  20180107140933363 5316 50.60: trclnk32:   FindNextStreamW 8489223965460398080 4a8501e0
+  20180107140933364 5316 50.60: trclnk32:   GetDiskFreeSpaceExW 8488685239122526208 4a8501e0
+  20180107140933365 5316 50.60: trclnk32:   CompareFileTime 8489025757014654976 4a8501e0
+  20180107140933366 5316 50.60: trclnk32:   RemoveDirectoryW 8488538084953030656 4a8501e0
+  20180107140933367 5316 50.60: trclnk32:   GetCurrentDirectoryW 8489216277468938240 4a8501e0
+  20180107140933368 5316 50.60: trclnk32:   SetCurrentDirectoryW 8489133990190514176 4a8501e0
+  20180107140933369 5316 50.60: trclnk32:   TerminateProcess 8488761041000333312 4a8501e0
+  20180107140933370 5316 50.60: trclnk32:   WaitForSingleObject 8488927475278020608 4a8501e0
+  20180107140933371 5316 50.60: trclnk32:   GetExitCodeProcess 8489026233756024832 4a8501e0
+  20180107140933372 5316 50.60: trclnk32:   CopyFileW 8488554959879536640 4a8501e0
+  20180107140933372 5316 50.60: trclnk32:   SetFileAttributesW 8488631204138975232 4a8501e0
+  20180107140933373 5316 50.60: trclnk32:   SetEndOfFile 8488760937921118208 4a8501e0
+  20180107140933374 5316 50.60: trclnk32:   DeleteFileW 8488739261221175296 4a8501e0
+  20180107140933375 5316 50.60: trclnk32:   SetFileTime 8488649874361810944 4a8501e0
+  20180107140933375 5316 50.60: trclnk32:   CreateDirectoryW 8488785178716536832 4a8501e0
+  20180107140933376 5316 50.60: trclnk32:   FillConsoleOutputAttribute 8489300093755719680 4a8501e0
+  20180107140933377 5316 50.60: trclnk32:   SetConsoleTextAttribute 8489299634194219008 4a8501e0
+  20180107140933378 5316 50.60: trclnk32:   ScrollConsoleScreenBufferW 8488475189451948032 4a8501e0
+  20180107140933379 5316 50.60: trclnk32:   FormatMessageW 8488815406696366080 4a8501e0
+  20180107140933380 5316 50.60: trclnk32:   GetACP 8489067224923897856 4a8501e0
+  20180107140933381 5316 50.60: trclnk32:   DuplicateHandle 8488948679531560960 4a8501e0
+  20180107140933382 5316 50.60: trclnk32:   FlushFileBuffers 8488581064690761728 4a8501e0
+  20180107140933383 5316 50.60: trclnk32:   HeapReAlloc 8605533977643581440 4a8501e0
+  20180107140933383 5316 50.60: trclnk32:   HeapSize 8605142950936051712 4a8501e0
+  20180107140933384 5316 50.60: trclnk32:   VirtualAlloc 8489056281347227648 4a8501e0
+  20180107140933386 5316 50.60: trclnk32:   VirtualFree 8489036412828516352 4a8501e0
+  20180107140933387 5316 50.60: trclnk32:   GetCurrentThreadId 8488928506070171648 4a8501e0
+  20180107140933388 5316 50.60: trclnk32:   OpenThread 8489117291357667328 4a8501e0
+  20180107140933389 5316 50.60: trclnk32:   HeapSetInformation 8489075664534634496 4a8501e0
+  20180107140933390 5316 50.60: trclnk32:   GetFileAttributesExW 8488765490586451968 4a8501e0
+  20180107140933391 5316 50.60: trclnk32:   GetDriveTypeW 8489069681645191168 4a8501e0
+  20180107140933392 5316 50.60: trclnk32:   InitializeCriticalSection 8605148847926149120 4a8501e0
+  20180107140933393 5316 50.60: trclnk32:   SetConsoleCtrlHandler 8489115783824146432 4a8501e0
+  20180107140933393 5316 50.60: trclnk32:   GetWindowsDirectoryW 8488727527370522624 4a8501e0
+  20180107140933394 5316 50.60: trclnk32:   GetVersion 8488745772391596032 4a8501e0
+  20180107140933395 5316 50.60: trclnk32:   GetModuleFileNameW 8489069956523098112 4a8501e0
+  20180107140933396 5316 50.60: trclnk32:   ExpandEnvironmentStringsW 8488799863209721856 4a8501e0
+  20180107140933399 5316 50.60: trclnk32:   CancelSynchronousIo 8490001736793063424 4a8501e0
+  20180107140933399 5316 50.60: trclnk32:   EnterCriticalSection 8604821498403749888 4a8501e0
+  20180107140933399 5316 50.60: trclnk32:   LeaveCriticalSection 8604821223525842944 4a8501e0
+  20180107140933400 5316 50.60: trclnk32:   GetVolumeInformationW 8489133118312153088 4a8501e0
+  20180107140933401 5316 50.60: trclnk32:   SearchPathW 8488790156583632896 4a8501e0
+  20180107140933402 5316 50.60: trclnk32:   WriteFile 8489025812849229824 4a8501e0
+  20180107140933403 5316 50.60: trclnk32:   SetFilePointerEx 8488711017516236800 4a8501e0
+  20180107140933404 5316 50.60: trclnk32:   GlobalAlloc 8488894837821538304 4a8501e0
+  20180107140933405 5316 50.60: trclnk32:   GlobalFree 8488894940900753408 4a8501e0
+  20180107140933406 5316 50.60: trclnk32:   MoveFileW 8489378249275604992 4a8501e0
+  20180107140933407 5316 50.60: trclnk32:   SetConsoleTitleW 8488724026972176384 4a8501e0
+  20180107140933408 5316 50.60: trclnk32:   LocalFree 8488944878485504000 4a8501e0
+  20180107140933408 5316 50.60: trclnk32:   MoveFileExW 8488804334270676992 4a8501e0
+  20180107140933409 5316 50.60: trclnk32:   GetConsoleTitleW 8489217664743374848 4a8501e0
+  20180107140933410 5316 50.60: trclnk32:   GetFileAttributesW 8489114868996112384 4a8501e0
+  20180107140933411 5316 50.60: trclnk32:   NeedCurrentDirectoryForExePathW 8489219279651078144 4a8501e0
+  20180107140933412 5316 50.60: trclnk32:   GetBinaryTypeW 8489372103177404416 4a8501e0
+  20180107140933413 5316 50.60: trclnk32:   SetFilePointer 8488963372614680576 4a8501e0
+  20180107140933414 5316 50.60: trclnk32:   lstrcmpW 8489117828228579328 4a8501e0
+  20180107140933417 5316 50.60: trclnk32:   lstrcmpiW 8488908074910744576 4a8501e0
+  20180107140933418 5316 50.60: trclnk32:   HeapFree 8488928849667555328 4a8501e0
+  20180107140933423 5316 50.60: trclnk32:   GetProcessHeap 8489024163581788160 4a8501e0
+  20180107140933423 5316 50.60: trclnk32:   SetThreadLocale 8489435819017240576 4a8501e0
+  20180107140933424 5316 50.60: trclnk32:   GetProcAddress 8489060803947790336 4a8501e0
+  20180107140933424 5316 50.60: trclnk32:   GetModuleHandleW 8489064626468683776 4a8501e0
+  20180107140933424 5316 50.60: trclnk32:   VirtualQuery 8489134484111753216 4a8501e0
+  20180107140933425 5316 50.60: trclnk32:   HeapAlloc 8605021910167715840 4a8501e0
+  20180107140933425 5316 50.60: trclnk32:   CloseHandle 8488944981564719104 4a8501e0
+  20180107140933425 5316 50.60: trclnk32:   MultiByteToWideChar 8489079873602584576 4a8501e0
+  20180107140933425 5316 50.60: trclnk32:   ReadFile 8488888352420921344 4a8501e0
+  20180107140933427 5316 50.60: trclnk32:   WriteConsoleW 8488866319238692864 4a8501e0
+  20180107140933427 5316 50.60: trclnk32:   FillConsoleOutputCharacterW 8490644281080414208 4a8501e0
+  20180107140933427 5316 50.60: trclnk32:   SetConsoleCursorPosition 8488474820084760576 4a8501e0
+  20180107140933427 5316 50.60: trclnk32:   ReadConsoleW 8489301184677412864 4a8501e0
+  20180107140933428 5316 50.60: trclnk32:   GetConsoleScreenBufferInfo 8488887626571448320 4a8501e0
+  20180107140933428 5316 50.60: trclnk32:   GetStdHandle 8489037108613218304 4a8501e0
+  20180107140933428 5316 50.60: trclnk32:   GetFileType 8489133174146727936 4a8501e0
+  20180107140933429 5316 50.60: trclnk32:   GetLastError 8488932354360868864 4a8501e0
+  20180107140933429 5316 50.60: trclnk32:   WideCharToMultiByte 8489079749048532992 4a8501e0
+  20180107140933430 5316 50.60: trclnk32:   GetFileSize 8488725040584458240 4a8501e0
+  20180107140933430 5316 50.60: trclnk32:   FlushConsoleInputBuffer 8490656066470674432 4a8501e0
+  20180107140933431 5316 50.60: trclnk32:   GetCPInfo 8489037005534003200 4a8501e0
+  20180107140933432 5316 50.60: trclnk32:   GetConsoleOutputCP 8489025164309168128 4a8501e0
+  20180107140933432 5316 50.60: trclnk32:   CmdBatNotification 8488867457405026304 4a8501e0
+  20180107140933432 5316 50.60: trclnk32:   CreateFileW 8488947017379217408 4a8501e0
+  20180107140933433 5316 50.60: trclnk32:   FindClose 8489019636686258176 4a8501e0
+  20180107140933433 5316 50.60: trclnk32:   FindNextFileW 8488887523492233216 4a8501e0
+  20180107140933433 5316 50.60: trclnk32:   FindFirstFileW 8489095846585958400 4a8501e0
+  20180107140933434 5316 50.60: trclnk32:   GetFullPathNameW 8489079976681799680 4a8501e0
+  20180107140933434 5316 50.60: trclnk32:   GetUserDefaultLCID 8489115440226762752 4a8501e0
+  20180107140933434 5316 50.60: trclnk32:   SetLocalTime 8490118147586654208 4a8501e0
+  20180107140933435 5316 50.60: trclnk32:   SystemTimeToFileTime 8488949718913646592 4a8501e0
+  20180107140933436 5316 50.60: trclnk32:   GetSystemTime 8488949774748221440 4a8501e0
+  20180107140933436 5316 50.60: trclnk32:   FileTimeToSystemTime 8489036799375572992 4a8501e0
+  20180107140933436 5316 50.60: trclnk32:   GetLocaleInfoW 8489115517536174080 4a8501e0
+  20180107140933437 5316 50.60: trclnk32:   FileTimeToLocalFileTime 8489039024168632320 4a8501e0
+  20180107140933437 5316 50.60: trclnk32:   GetTimeFormatW 8488911639733600256 4a8501e0
+  20180107140933437 5316 50.60: trclnk32:   GetLocalTime 8488908225234599936 4a8501e0
+  20180107140933437 5316 50.60: trclnk32:   FreeEnvironmentStringsW 8489036545972502528 4a8501e0
+  20180107140933438 5316 50.60: trclnk32:   GetEnvironmentStringsW 8489036515907731456 4a8501e0
+  20180107140933438 5316 50.60: trclnk32:   SetEnvironmentVariableW 8488961993930178560 4a8501e0
+  20180107140933438 5316 50.60: trclnk32:   SetEnvironmentStringsW 8488726638312292352 4a8501e0
+  20180107140933438 5316 50.60: trclnk32:   SetConsoleMode 8489043868891742208 4a8501e0
+  20180107140933439 5316 50.60: trclnk32:   GetConsoleMode 8489043482344685568 4a8501e0
+  20180107140933439 5316 50.60: trclnk32:   GetNumaHighestNodeNumber 8490091213846740992 4a8501e0
+  20180107140933439 5316 50.60: trclnk32:   GetCommandLineW 8489117750919168000 4a8501e0
+  20180107140933439 5316 50.60: trclnk32:   GetEnvironmentVariableW 8489115715104669696 4a8501e0
+  20180107140933439 5316 50.60: trclnk32:   SetErrorMode 8489085534369480704 4a8501e0
+  20180107140933440 5316 50.60: trclnk32:   GetVDMCurrentDirectories 8490192416161136640 4a8501e0
+  20180107140933440 5316 50.60: trclnk32:   RegCloseKey 8488945887802818560 4a8501e0
+  20180107140933440 5316 50.60: trclnk32:   SetLastError 8488927990674096128 4a8501e0
+  20180107140933440 5316 50.60: trclnk32:   RegQueryValueExW 8489058901277278208 4a8501e0
+  20180107140933440 5316 50.60: trclnk32:   RegOpenKeyExW 8488935141794643968 4a8501e0
+  20180107140933441 5316 50.60: trclnk32:   RegDeleteValueW 8488640429728727040 4a8501e0
+  20180107140933441 5316 50.60: trclnk32:   RegDeleteKeyExW 8488553314907062272 4a8501e0
+  20180107140933441 5316 50.60: trclnk32:   ReadProcessMemory 8488653963170676736 4a8501e0
+  20180107140933441 5316 50.60: trclnk32:   LoadLibraryW 8489069797609308160 4a8501e0
+  20180107140933442 5316 50.60: trclnk32:   QueryFullProcessImageNameW 8488823674508410880 4a8501e0
+  20180107140933442 5316 50.60: trclnk32:   GetConsoleWindow 8489328758367453184 4a8501e0
+  20180107140933442 5316 50.60: trclnk32:   CreateProcessW 8487631962817691648 4a8501e0
+  20180107140933442 5316 50.60: trclnk32:   GetStartupInfoW 8489066018038087680 4a8501e0
+  20180107140933443 5316 50.60: trclnk32:   DeleteProcThreadAttributeList 8473707726088699904 4a8501e0
+  20180107140933443 5316 50.60: trclnk32:   UpdateProcThreadAttribute 8473874250560700416 4a8501e0
+  20180107140933443 5316 50.60: trclnk32:   InitializeProcThreadAttributeList 8473873859718676480 4a8501e0
+  20180107140933444 5316 50.60: trclnk32:   RegSetValueExW 8488885831275118592 4a8501e0
+  20180107140933444 5316 50.60: trclnk32:   RegCreateKeyExW 8488736800204914688 4a8501e0
+  20180107140933444 5316 50.60: trclnk32: WINBRAND.dll [4a872c08 4a85139c]
+  20180107140933444 5316 50.60: trclnk32:   BrandingFormatString 7633070652169125888 4a8501e0
+  20180107140933445 5316 50.60: trclnk32: 001 GetProcAddress(75ab0000,GetCharABCWidthsI)
+  20180107140933445 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 75abbd76
+  20180107140933445 5316 50.60: trclnk32: 001 LoadLibraryW(C:\Windows\system32\IMM32.DLL)
+  20180107140933446 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmWINNLSEnableIME)
+  20180107140933446 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90171
+  20180107140933447 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmWINNLSGetEnableStatus)
+  20180107140933447 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90198
+  20180107140933448 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSendIMEMessageExW)
+  20180107140933448 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90426
+  20180107140933448 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSendIMEMessageExA)
+  20180107140933448 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90441
+  20180107140933448 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIMPGetIMEW)
+  20180107140933449 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c9069f
+  20180107140933449 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIMPGetIMEA)
+  20180107140933449 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c906d3
+  20180107140933449 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIMPQueryIMEW)
+  20180107140933449 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90504
+  20180107140933450 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIMPQueryIMEA)
+  20180107140933450 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90610
+  20180107140933450 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIMPSetIMEW)
+  20180107140933450 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c90280
+  20180107140933450 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIMPSetIMEA)
+  20180107140933451 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c903a8
+  20180107140933451 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmAssociateContext)
+  20180107140933451 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c83515
+  20180107140933451 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmEscapeA)
+  20180107140933451 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8a08a
+  20180107140933452 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmEscapeW)
+  20180107140933452 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8a309
+  20180107140933452 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetCompositionStringA)
+  20180107140933452 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c884b9
+  20180107140933452 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetCompositionStringW)
+  20180107140933453 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c877b0
+  20180107140933453 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetCompositionWindow)
+  20180107140933453 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82d44
+  20180107140933453 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetContext)
+  20180107140933453 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8299d
+  20180107140933454 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetDefaultIMEWnd)
+  20180107140933454 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c827f2
+  20180107140933454 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmIsIME)
+  20180107140933454 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82ceb
+  20180107140933454 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmReleaseContext)
+  20180107140933454 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82a67
+  20180107140933455 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmRegisterClient)
+  20180107140933455 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c825b2
+  20180107140933455 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetCompositionFontW)
+  20180107140933455 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c86ca3
+  20180107140933455 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetCompositionFontA)
+  20180107140933456 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c86c07
+  20180107140933456 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetCompositionFontW)
+  20180107140933456 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c847ef
+  20180107140933456 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetCompositionFontA)
+  20180107140933456 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c86d3f
+  20180107140933457 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetCompositionWindow)
+  20180107140933457 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c84772
+  20180107140933457 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmNotifyIME)
+  20180107140933457 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c849cd
+  20180107140933457 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmLockIMC)
+  20180107140933458 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82827
+  20180107140933458 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmUnlockIMC)
+  20180107140933458 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c828a8
+  20180107140933458 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmLoadIME)
+  20180107140933458 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82fc6
+  20180107140933459 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetOpenStatus)
+  20180107140933459 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c84d84
+  20180107140933459 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmFreeLayout)
+  20180107140933459 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8a548
+  20180107140933459 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmActivateLayout)
+  20180107140933459 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c89b87
+  20180107140933460 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetCandidateWindow)
+  20180107140933460 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82d87
+  20180107140933460 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetCandidateWindow)
+  20180107140933460 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c86eb9
+  20180107140933460 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmConfigureIMEW)
+  20180107140933461 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c89eac
+  20180107140933461 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetConversionStatus)
+  20180107140933461 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c837dc
+  20180107140933461 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetConversionStatus)
+  20180107140933461 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c84c7d
+  20180107140933462 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetStatusWindowPos)
+  20180107140933462 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c86e51
+  20180107140933462 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetImeInfoEx)
+  20180107140933462 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82dd7
+  20180107140933462 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmLockImeDpi)
+  20180107140933462 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82ac6
+  20180107140933463 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmUnlockImeDpi)
+  20180107140933463 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82a79
+  20180107140933464 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetOpenStatus)
+  20180107140933464 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c86766
+  20180107140933465 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetActiveContext)
+  20180107140933465 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82b63
+  20180107140933465 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmTranslateMessage)
+  20180107140933465 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8fdb9
+  20180107140933465 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmLoadLayout)
+  20180107140933466 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c84356
+  20180107140933466 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmProcessKey)
+  20180107140933466 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c848bf
+  20180107140933466 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmPutImeMenuItemsIntoMappedFile)
+  20180107140933466 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c9599c
+  20180107140933467 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmGetProperty)
+  20180107140933467 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c84af6
+  20180107140933467 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetCompositionStringA)
+  20180107140933467 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c89166
+  20180107140933467 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSetCompositionStringW)
+  20180107140933468 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8918d
+  20180107140933468 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmEnumInputContext)
+  20180107140933468 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c840d2
+  20180107140933468 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,ImmSystemHandler)
+  20180107140933468 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8bd2a
+  20180107140933469 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmTIMActivate)
+  20180107140933469 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c82ed6
+  20180107140933469 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmRestoreToolbarWnd)
+  20180107140933469 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c95c1a
+  20180107140933470 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmHideToolbarWnd)
+  20180107140933470 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c95c51
+  20180107140933470 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmDispatchDefImeMessage)
+  20180107140933470 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c81579
+  20180107140933470 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmNotify)
+  20180107140933470 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c8152d
+  20180107140933471 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmSetDefaultRemoteKeyboardLayout)
+  20180107140933471 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c95eb7
+  20180107140933471 5316 50.60: trclnk32: 001   GetProcAddress(75c80000,CtfImmGetCompatibleKeyboardLayout)
+  20180107140933471 5316 50.60: trclnk32: 001   GetProcAddress(,) -> 75c95ec7
+  20180107140933472 5316 50.60: trclnk32: 001 LoadLibraryW() -> 75c80000
+  20180107140933472 5316 50.60: trclnk32: 001 GetProcAddress(777f0000,LpkTabbedTextOut)
+  20180107140933472 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 777f54f3
+  20180107140933472 5316 50.60: trclnk32: 001 GetProcAddress(777f0000,LpkPSMTextOut)
+  20180107140933473 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 777f4251
+  20180107140933473 5316 50.60: trclnk32: 001 GetProcAddress(777f0000,LpkDrawTextEx)
+  20180107140933473 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 777f1770
+  20180107140933473 5316 50.60: trclnk32: 001 GetProcAddress(777f0000,LpkEditControl)
+  20180107140933473 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 777f706c
+  20180107140933474 5316 50.60: trclnk32: 001 GetProcAddress(75ca0000,SetThreadUILanguage)
+  20180107140933474 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 75cf24c2
+  20180107140933476 5316 50.60: trclnk32: 001 GetProcAddress(75ca0000,CopyFileExW)
+  20180107140933476 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 75cdac6c
+  20180107140933476 5316 50.60: trclnk32: 001 GetProcAddress(75ca0000,IsDebuggerPresent)
+  20180107140933476 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 75ce3ea8
+  20180107140933476 5316 50.60: trclnk32: 001 GetProcAddress(75ca0000,SetConsoleInputExeNameW)
+  20180107140933477 5316 50.60: trclnk32: 001 GetProcAddress(,) -> 75cf2732
+  20180107140933479 5316 50.50: trclnk32: ### Closing.
+  20180107140933480 ---- --.60: Client closed pipe.
+  	cd "C:\Users\admin\source\repos\Detours\samples\impmunge"
+  	..\..\bin.X86\impmunge.exe /m /o:test.exe.1 ..\..\bin.X86\impmunge.exe
+  ..\..\bin.X86\impmunge.exe -> test.exe.1:
+  ||*.......................................................................||*.||
+    byway   -------------------------------- 
+    byway   -------------------------------- mb_munge_1.dll
+    byway   -------------------------------- 
+    file    KERNEL32.dll                     mf_KERNEL32.dll                 
+    symbol  CreateFileA                      ms_CreateFileA                  
+    symbol  CloseHandle                      ms_CloseHandle                  
+    symbol  GetLastError                     ms_GetLastError                 
+    symbol  GetFileSize                      ms_GetFileSize                  
+    symbol  SetFilePointer                   ms_SetFilePointer               
+    symbol  WriteFile                        ms_WriteFile                    
+    symbol  SetLastError                     ms_SetLastError                 
+    symbol  CreateFileMappingW               ms_CreateFileMappingW           
+    symbol  MapViewOfFileEx                  ms_MapViewOfFileEx              
+    symbol  UnmapViewOfFile                  ms_UnmapViewOfFile              
+    symbol  WriteConsoleW                    ms_WriteConsoleW                
+    symbol  CreateFileW                      ms_CreateFileW                  
+    symbol  UnhandledExceptionFilter         ms_UnhandledExceptionFilter     
+    symbol  SetUnhandledExceptionFilter      ms_SetUnhandledExceptionFilter  
+    symbol  GetCurrentProcess                ms_GetCurrentProcess            
+    symbol  TerminateProcess                 ms_TerminateProcess             
+    symbol  IsProcessorFeaturePresent        ms_IsProcessorFeaturePresent    
+    symbol  QueryPerformanceCounter          ms_QueryPerformanceCounter      
+    symbol  GetCurrentProcessId              ms_GetCurrentProcessId          
+    symbol  GetCurrentThreadId               ms_GetCurrentThreadId           
+    symbol  GetSystemTimeAsFileTime          ms_GetSystemTimeAsFileTime      
+    symbol  InitializeSListHead              ms_InitializeSListHead          
+    symbol  IsDebuggerPresent                ms_IsDebuggerPresent            
+    symbol  GetStartupInfoW                  ms_GetStartupInfoW              
+    symbol  GetModuleHandleW                 ms_GetModuleHandleW             
+    symbol  RaiseException                   ms_RaiseException               
+    symbol  RtlUnwind                        ms_RtlUnwind                    
+    symbol  EnterCriticalSection             ms_EnterCriticalSection         
+    symbol  LeaveCriticalSection             ms_LeaveCriticalSection         
+    symbol  DeleteCriticalSection            ms_DeleteCriticalSection        
+    symbol  InitializeCriticalSectionAndSpin ms_InitializeCriticalSectionAndS
+    symbol  TlsAlloc                         ms_TlsAlloc                     
+    symbol  TlsGetValue                      ms_TlsGetValue                  
+    symbol  TlsSetValue                      ms_TlsSetValue                  
+    symbol  TlsFree                          ms_TlsFree                      
+    symbol  FreeLibrary                      ms_FreeLibrary                  
+    symbol  GetProcAddress                   ms_GetProcAddress               
+    symbol  LoadLibraryExW                   ms_LoadLibraryExW               
+    symbol  GetStdHandle                     ms_GetStdHandle                 
+    symbol  GetModuleFileNameA               ms_GetModuleFileNameA           
+    symbol  MultiByteToWideChar              ms_MultiByteToWideChar          
+    symbol  WideCharToMultiByte              ms_WideCharToMultiByte          
+    symbol  ExitProcess                      ms_ExitProcess                  
+    symbol  GetModuleHandleExW               ms_GetModuleHandleExW           
+    symbol  GetCommandLineA                  ms_GetCommandLineA              
+    symbol  GetCommandLineW                  ms_GetCommandLineW              
+    symbol  GetACP                           ms_GetACP                       
+    symbol  HeapFree                         ms_HeapFree                     
+    symbol  HeapAlloc                        ms_HeapAlloc                    
+    symbol  CompareStringW                   ms_CompareStringW               
+    symbol  LCMapStringW                     ms_LCMapStringW                 
+    symbol  GetFileType                      ms_GetFileType                  
+    symbol  FindClose                        ms_FindClose                    
+    symbol  FindFirstFileExA                 ms_FindFirstFileExA             
+    symbol  FindNextFileA                    ms_FindNextFileA                
+    symbol  IsValidCodePage                  ms_IsValidCodePage              
+    symbol  GetOEMCP                         ms_GetOEMCP                     
+    symbol  GetCPInfo                        ms_GetCPInfo                    
+    symbol  GetEnvironmentStringsW           ms_GetEnvironmentStringsW       
+    symbol  FreeEnvironmentStringsW          ms_FreeEnvironmentStringsW      
+    symbol  SetEnvironmentVariableA          ms_SetEnvironmentVariableA      
+    symbol  SetStdHandle                     ms_SetStdHandle                 
+    symbol  GetStringTypeW                   ms_GetStringTypeW               
+    symbol  GetProcessHeap                   ms_GetProcessHeap               
+    symbol  FlushFileBuffers                 ms_FlushFileBuffers             
+    symbol  GetConsoleCP                     ms_GetConsoleCP                 
+    symbol  GetConsoleMode                   ms_GetConsoleMode               
+    symbol  HeapSize                         ms_HeapSize                     
+    symbol  HeapReAlloc                      ms_HeapReAlloc                  
+    symbol  SetFilePointerEx                 ms_SetFilePointerEx             
+    symbol  DecodePointer                    ms_DecodePointer                
+    byway   -------------------------------- 
+    byway   -------------------------------- mb_munge_2.dll
+    byway   -------------------------------- 
+    file    imagehlp.dll                     mf_imagehlp.dll                 
+    symbol  BindImageEx                      ms_BindImageEx                  
+    byway   -------------------------------- 
+    byway   -------------------------------- mb_munge_3.dll
+    byway   -------------------------------- 
+    commit
+  	..\..\bin.X86\impmunge.exe /m /l- /o:test.exe.2 test.exe.1
+  test.exe.1 -> test.exe.2:
+  ||*.......................................................................||*.||
+  	..\..\bin.X86\impmunge.exe /m /l- /o:test.exe.3 test.exe.2
+  test.exe.2 -> test.exe.3:
+  ||||*.......................................................................||||*.||||
+  	..\..\bin.X86\impmunge.exe /m /l- /o:test.exe.4 test.exe.3
+  test.exe.3 -> test.exe.4:
+  ||||*.......................................................................||||*.||||
+  	..\..\bin.X86\impmunge.exe /l test.exe.4
+  test.exe.4:
+    byway   -------------------------------- 
+    byway   -------------------------------- mb_munge_1.dll
+    byway   -------------------------------- 
+    file    KERNEL32.dll                     mf_mf_mf_mf_KERNEL32.dll        
+    symbol  CreateFileA                      ms_ms_ms_ms_CreateFileA         
+    symbol  CloseHandle                      ms_ms_ms_ms_CloseHandle         
+    symbol  GetLastError                     ms_ms_ms_ms_GetLastError        
+    symbol  GetFileSize                      ms_ms_ms_ms_GetFileSize         
+    symbol  SetFilePointer                   ms_ms_ms_ms_SetFilePointer      
+    symbol  WriteFile                        ms_ms_ms_ms_WriteFile           
+    symbol  SetLastError                     ms_ms_ms_ms_SetLastError        
+    symbol  CreateFileMappingW               ms_ms_ms_ms_CreateFileMappingW  
+    symbol  MapViewOfFileEx                  ms_ms_ms_ms_MapViewOfFileEx     
+    symbol  UnmapViewOfFile                  ms_ms_ms_ms_UnmapViewOfFile     
+    symbol  WriteConsoleW                    ms_ms_ms_ms_WriteConsoleW       
+    symbol  CreateFileW                      ms_ms_ms_ms_CreateFileW         
+    symbol  UnhandledExceptionFilter         ms_ms_ms_ms_UnhandledExceptionFi
+    symbol  SetUnhandledExceptionFilter      ms_ms_ms_ms_SetUnhandledExceptio
+    symbol  GetCurrentProcess                ms_ms_ms_ms_GetCurrentProcess   
+    symbol  TerminateProcess                 ms_ms_ms_ms_TerminateProcess    
+    symbol  IsProcessorFeaturePresent        ms_ms_ms_ms_IsProcessorFeaturePr
+    symbol  QueryPerformanceCounter          ms_ms_ms_ms_QueryPerformanceCoun
+    symbol  GetCurrentProcessId              ms_ms_ms_ms_GetCurrentProcessId 
+    symbol  GetCurrentThreadId               ms_ms_ms_ms_GetCurrentThreadId  
+    symbol  GetSystemTimeAsFileTime          ms_ms_ms_ms_GetSystemTimeAsFileT
+    symbol  InitializeSListHead              ms_ms_ms_ms_InitializeSListHead 
+    symbol  IsDebuggerPresent                ms_ms_ms_ms_IsDebuggerPresent   
+    symbol  GetStartupInfoW                  ms_ms_ms_ms_GetStartupInfoW     
+    symbol  GetModuleHandleW                 ms_ms_ms_ms_GetModuleHandleW    
+    symbol  RaiseException                   ms_ms_ms_ms_RaiseException      
+    symbol  RtlUnwind                        ms_ms_ms_ms_RtlUnwind           
+    symbol  EnterCriticalSection             ms_ms_ms_ms_EnterCriticalSection
+    symbol  LeaveCriticalSection             ms_ms_ms_ms_LeaveCriticalSection
+    symbol  DeleteCriticalSection            ms_ms_ms_ms_DeleteCriticalSectio
+    symbol  InitializeCriticalSectionAndSpin ms_ms_ms_ms_InitializeCriticalSe
+    symbol  TlsAlloc                         ms_ms_ms_ms_TlsAlloc            
+    symbol  TlsGetValue                      ms_ms_ms_ms_TlsGetValue         
+    symbol  TlsSetValue                      ms_ms_ms_ms_TlsSetValue         
+    symbol  TlsFree                          ms_ms_ms_ms_TlsFree             
+    symbol  FreeLibrary                      ms_ms_ms_ms_FreeLibrary         
+    symbol  GetProcAddress                   ms_ms_ms_ms_GetProcAddress      
+    symbol  LoadLibraryExW                   ms_ms_ms_ms_LoadLibraryExW      
+    symbol  GetStdHandle                     ms_ms_ms_ms_GetStdHandle        
+    symbol  GetModuleFileNameA               ms_ms_ms_ms_GetModuleFileNameA  
+    symbol  MultiByteToWideChar              ms_ms_ms_ms_MultiByteToWideChar 
+    symbol  WideCharToMultiByte              ms_ms_ms_ms_WideCharToMultiByte 
+    symbol  ExitProcess                      ms_ms_ms_ms_ExitProcess         
+    symbol  GetModuleHandleExW               ms_ms_ms_ms_GetModuleHandleExW  
+    symbol  GetCommandLineA                  ms_ms_ms_ms_GetCommandLineA     
+    symbol  GetCommandLineW                  ms_ms_ms_ms_GetCommandLineW     
+    symbol  GetACP                           ms_ms_ms_ms_GetACP              
+    symbol  HeapFree                         ms_ms_ms_ms_HeapFree            
+    symbol  HeapAlloc                        ms_ms_ms_ms_HeapAlloc           
+    symbol  CompareStringW                   ms_ms_ms_ms_CompareStringW      
+    symbol  LCMapStringW                     ms_ms_ms_ms_LCMapStringW        
+    symbol  GetFileType                      ms_ms_ms_ms_GetFileType         
+    symbol  FindClose                        ms_ms_ms_ms_FindClose           
+    symbol  FindFirstFileExA                 ms_ms_ms_ms_FindFirstFileExA    
+    symbol  FindNextFileA                    ms_ms_ms_ms_FindNextFileA       
+    symbol  IsValidCodePage                  ms_ms_ms_ms_IsValidCodePage     
+    symbol  GetOEMCP                         ms_ms_ms_ms_GetOEMCP            
+    symbol  GetCPInfo                        ms_ms_ms_ms_GetCPInfo           
+    symbol  GetEnvironmentStringsW           ms_ms_ms_ms_GetEnvironmentString
+    symbol  FreeEnvironmentStringsW          ms_ms_ms_ms_FreeEnvironmentStrin
+    symbol  SetEnvironmentVariableA          ms_ms_ms_ms_SetEnvironmentVariab
+    symbol  SetStdHandle                     ms_ms_ms_ms_SetStdHandle        
+    symbol  GetStringTypeW                   ms_ms_ms_ms_GetStringTypeW      
+    symbol  GetProcessHeap                   ms_ms_ms_ms_GetProcessHeap      
+    symbol  FlushFileBuffers                 ms_ms_ms_ms_FlushFileBuffers    
+    symbol  GetConsoleCP                     ms_ms_ms_ms_GetConsoleCP        
+    symbol  GetConsoleMode                   ms_ms_ms_ms_GetConsoleMode      
+    symbol  HeapSize                         ms_ms_ms_ms_HeapSize            
+    symbol  HeapReAlloc                      ms_ms_ms_ms_HeapReAlloc         
+    symbol  SetFilePointerEx                 ms_ms_ms_ms_SetFilePointerEx    
+    symbol  DecodePointer                    ms_ms_ms_ms_DecodePointer       
+    byway   -------------------------------- 
+    byway   -------------------------------- mb_munge_2.dll
+    byway   -------------------------------- 
+    file    imagehlp.dll                     mf_mf_mf_mf_imagehlp.dll        
+    symbol  BindImageEx                      ms_ms_ms_ms_BindImageEx         
+    byway   -------------------------------- 
+    byway   -------------------------------- mb_munge_3.dll
+    byway   -------------------------------- 
+    commit
+  	..\..\bin.X86\impmunge.exe /r /l- /o:test.exe.0 test.exe.4
+  test.exe.4 -> test.exe.0:
+  	..\..\bin.X86\impmunge.exe /l test.exe.0
+  test.exe.0:
+    byway   -------------------------------- 
+    file    KERNEL32.dll                     KERNEL32.dll                    
+    symbol  CreateFileA                      CreateFileA                     
+    symbol  CloseHandle                      CloseHandle                     
+    symbol  GetLastError                     GetLastError                    
+    symbol  GetFileSize                      GetFileSize                     
+    symbol  SetFilePointer                   SetFilePointer                  
+    symbol  WriteFile                        WriteFile                       
+    symbol  SetLastError                     SetLastError                    
+    symbol  CreateFileMappingW               CreateFileMappingW              
+    symbol  MapViewOfFileEx                  MapViewOfFileEx                 
+    symbol  UnmapViewOfFile                  UnmapViewOfFile                 
+    symbol  WriteConsoleW                    WriteConsoleW                   
+    symbol  CreateFileW                      CreateFileW                     
+    symbol  UnhandledExceptionFilter         UnhandledExceptionFilter        
+    symbol  SetUnhandledExceptionFilter      SetUnhandledExceptionFilter     
+    symbol  GetCurrentProcess                GetCurrentProcess               
+    symbol  TerminateProcess                 TerminateProcess                
+    symbol  IsProcessorFeaturePresent        IsProcessorFeaturePresent       
+    symbol  QueryPerformanceCounter          QueryPerformanceCounter         
+    symbol  GetCurrentProcessId              GetCurrentProcessId             
+    symbol  GetCurrentThreadId               GetCurrentThreadId              
+    symbol  GetSystemTimeAsFileTime          GetSystemTimeAsFileTime         
+    symbol  InitializeSListHead              InitializeSListHead             
+    symbol  IsDebuggerPresent                IsDebuggerPresent               
+    symbol  GetStartupInfoW                  GetStartupInfoW                 
+    symbol  GetModuleHandleW                 GetModuleHandleW                
+    symbol  RaiseException                   RaiseException                  
+    symbol  RtlUnwind                        RtlUnwind                       
+    symbol  EnterCriticalSection             EnterCriticalSection            
+    symbol  LeaveCriticalSection             LeaveCriticalSection            
+    symbol  DeleteCriticalSection            DeleteCriticalSection           
+    symbol  InitializeCriticalSectionAndSpin InitializeCriticalSectionAndSpin
+    symbol  TlsAlloc                         TlsAlloc                        
+    symbol  TlsGetValue                      TlsGetValue                     
+    symbol  TlsSetValue                      TlsSetValue                     
+    symbol  TlsFree                          TlsFree                         
+    symbol  FreeLibrary                      FreeLibrary                     
+    symbol  GetProcAddress                   GetProcAddress                  
+    symbol  LoadLibraryExW                   LoadLibraryExW                  
+    symbol  GetStdHandle                     GetStdHandle                    
+    symbol  GetModuleFileNameA               GetModuleFileNameA              
+    symbol  MultiByteToWideChar              MultiByteToWideChar             
+    symbol  WideCharToMultiByte              WideCharToMultiByte             
+    symbol  ExitProcess                      ExitProcess                     
+    symbol  GetModuleHandleExW               GetModuleHandleExW              
+    symbol  GetCommandLineA                  GetCommandLineA                 
+    symbol  GetCommandLineW                  GetCommandLineW                 
+    symbol  GetACP                           GetACP                          
+    symbol  HeapFree                         HeapFree                        
+    symbol  HeapAlloc                        HeapAlloc                       
+    symbol  CompareStringW                   CompareStringW                  
+    symbol  LCMapStringW                     LCMapStringW                    
+    symbol  GetFileType                      GetFileType                     
+    symbol  FindClose                        FindClose                       
+    symbol  FindFirstFileExA                 FindFirstFileExA                
+    symbol  FindNextFileA                    FindNextFileA                   
+    symbol  IsValidCodePage                  IsValidCodePage                 
+    symbol  GetOEMCP                         GetOEMCP                        
+    symbol  GetCPInfo                        GetCPInfo                       
+    symbol  GetEnvironmentStringsW           GetEnvironmentStringsW          
+    symbol  FreeEnvironmentStringsW          FreeEnvironmentStringsW         
+    symbol  SetEnvironmentVariableA          SetEnvironmentVariableA         
+    symbol  SetStdHandle                     SetStdHandle                    
+    symbol  GetStringTypeW                   GetStringTypeW                  
+    symbol  GetProcessHeap                   GetProcessHeap                  
+    symbol  FlushFileBuffers                 FlushFileBuffers                
+    symbol  GetConsoleCP                     GetConsoleCP                    
+    symbol  GetConsoleMode                   GetConsoleMode                  
+    symbol  HeapSize                         HeapSize                        
+    symbol  HeapReAlloc                      HeapReAlloc                     
+    symbol  SetFilePointerEx                 SetFilePointerEx                
+    symbol  DecodePointer                    DecodePointer                   
+    byway   -------------------------------- 
+    file    imagehlp.dll                     imagehlp.dll                    
+    symbol  BindImageEx                      BindImageEx                     
+    byway   -------------------------------- 
+    commit
+  	cd "C:\Users\admin\source\repos\Detours\samples"
+  	cd "C:\Users\admin\source\repos\Detours"
